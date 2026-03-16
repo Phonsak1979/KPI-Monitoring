@@ -2,7 +2,7 @@
 <html lang="en">
 
 <!-- Title -->
-@section('title', 'Login')
+@section('title', 'เข้าสู่ระบบ')
 
 <!-- Head -->
 @include('layouts.head')
@@ -35,7 +35,7 @@
 
         <!-- Logo -->
         <div class="login-logo">
-            <img src="dist/img/MOPH-Logo.png" alt="MOPH-Logo" width="55" class="img-circle elevation-3">
+            <img src="dist/img/MOPH-Logo.png" alt="MOPH Logo" width="55" class="img-circle elevation-3">
             <a style="font-family: 'Audiowide', sans-serif; font-size: 33px;" href="#"
                 class="text-warning">KPI-Monitoring</a>
         </div>
@@ -45,7 +45,8 @@
 
             <!-- Card Body -->
             <div class="card-body login-card-body">
-                <h4 style="font-family: 'Audiowide', sans-serif;" class="login-box-msg text-success"><i class="fas fa-user-lock mr-2"></i> Login System
+                <h4 style="font-family: 'Audiowide', sans-serif;" class="login-box-msg text-success"><i
+                        class="fas fa-user-lock mr-2"></i> Login System
                 </h4>
 
                 <!-- Form -->
@@ -75,7 +76,7 @@
                     <div class="input-group mb-3">
                         <input id="password" type="password"
                             class="form-control @error('password') is-invalid @enderror" name="password" required
-                            autocomplete="current-password" placeholder="password">
+                            autocomplete="current-password" placeholder="รหัสผ่าน 8 หลัก">
                         <div class="input-group-append">
 
                             <div class="input-group-text" style="cursor: pointer;" onclick="togglePassword()">
@@ -100,11 +101,12 @@
                 </form>
 
                 @if (Route::has('password.request'))
-                    <p class="mt-3 mb-1 text-sm">
+                    {{-- <p class="mt-3 mb-1 text-sm">
                         <a href="{{ route('password.request') }}">ลืมรหัสผ่านหรือไม่ ?</a>
-                    </p>
-                    <p class="mb-0 text-sm">
-                        ยังไม่ลงทะเบียนเข้าใช้งาน <a href="{{ route('register') }}" class="text-center">คลิกที่นี่ !</a>
+                    </p> --}}
+                    <p class="mt-3 mb-0 text-sm">
+                        ต้องการลงทะเบียนเข้าใช้งาน <a href="{{ route('register') }}" class="text-center">คลิกที่นี่
+                            !</a>
                     </p>
                 @endif
 
@@ -130,6 +132,17 @@
                 toggleIcon.classList.add('fa-eye');
             }
         }
+
+        // Popup แจ้งเตือน user ถูกระงับ
+        @if ($errors->has('inactive'))
+            Swal.fire({
+                icon: 'warning',
+                title: 'บัญชียังไม่ได้รับสิทธิ์เข้าใช้งาน',
+                html: '<span style="font-size: 18px;">กรุณาติดต่อ <b class="text-primary">ผู้ดูแลระบบ</b> เพื่อดำเนินการอนุมัติ</span>',
+                confirmButtonColor: '#28a745',
+                confirmButtonText: '<i class="fas fa-sign-out-alt"></i> ออกจากระบบ'
+            });
+        @endif
     </script>
 </body>
 
