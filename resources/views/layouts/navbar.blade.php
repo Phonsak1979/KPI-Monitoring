@@ -1,4 +1,4 @@
-<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+<nav class="main-header navbar navbar-expand navbar-white navbar-light" id="main-navbar">
 
     <!-- Left navbar links -->
     <ul class="navbar-nav">
@@ -20,6 +20,13 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+
+        <!-- Dark Mode Toggle -->
+        <li class="nav-item">
+            <button id="dark-mode-toggle" class="nav-link" title="สลับ Dark/Light Mode">
+                <i class="fas fa-moon" id="dark-mode-icon"></i>
+            </button>
+        </li>
 
         <!-- Authentication Links -->
         @guest

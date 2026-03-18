@@ -55,6 +55,17 @@
     <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
 
+    <!-- Dark Mode -->
+    <link rel="stylesheet" href="{{ asset('css/dark-mode.css') }}">
+    <script>
+        // Apply dark mode immediately to prevent flash
+        (function() {
+            if (localStorage.getItem('dark-mode') === 'true') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
     @yield('CSS')
 
 </head>

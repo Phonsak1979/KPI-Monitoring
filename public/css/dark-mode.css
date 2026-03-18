@@ -1,0 +1,257 @@
+/* ============================================
+   Dark Mode Overrides for KPI Dashboard
+   ============================================ */
+
+/* --- Content Wrapper --- */
+.dark-mode .content-wrapper {
+    background-color: #1a1d21 !important;
+    color: #e0e0e0;
+}
+
+/* --- Main Footer --- */
+.dark-mode .main-footer {
+    background-color: #1f2227 !important;
+    border-top: 1px solid #3a3f47 !important;
+    color: #b0b0b0 !important;
+}
+.dark-mode .main-footer a {
+    color: #5dade2 !important;
+}
+
+/* --- Navbar --- */
+.dark-mode .main-header.navbar {
+    background-color: #1f2227 !important;
+    border-bottom: 1px solid #3a3f47 !important;
+}
+.dark-mode .main-header .nav-link {
+    color: #c8ccd0 !important;
+}
+.dark-mode .main-header .nav-link:hover {
+    color: #fff !important;
+}
+.dark-mode .main-header .dropdown-menu {
+    background-color: #2b2f35;
+    border: 1px solid #3a3f47;
+}
+.dark-mode .main-header .dropdown-item {
+    color: #c8ccd0;
+}
+.dark-mode .main-header .dropdown-item:hover {
+    background-color: #3a3f47;
+    color: #fff;
+}
+
+/* --- Cards --- */
+.dark-mode .card {
+    background-color: #2b2f35 !important;
+    color: #e0e0e0;
+    border-color: #3a3f47 !important;
+}
+.dark-mode .card-header {
+    border-bottom: 1px solid #3a3f47 !important;
+}
+.dark-mode .card-footer {
+    border-top: 1px solid #3a3f47 !important;
+    background-color: #252830 !important;
+}
+
+/* --- Tables --- */
+.dark-mode .table {
+    color: #e0e0e0;
+}
+.dark-mode .table thead th {
+    border-bottom: 2px solid #3a3f47 !important;
+    color: #c8ccd0;
+}
+.dark-mode .table td,
+.dark-mode .table th {
+    border-top: 1px solid #3a3f47 !important;
+}
+.dark-mode .table-hover tbody tr:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+.dark-mode .table tfoot {
+    background-color: #252830 !important;
+}
+.dark-mode .table tfoot td {
+    color: #e0e0e0 !important;
+}
+
+/* --- Forms --- */
+.dark-mode .form-control {
+    background-color: #2b2f35 !important;
+    border-color: #3a3f47 !important;
+    color: #e0e0e0 !important;
+}
+.dark-mode .form-control:focus {
+    background-color: #343840 !important;
+    border-color: #5dade2 !important;
+    color: #fff !important;
+}
+.dark-mode .form-control::placeholder {
+    color: #8a8a8a !important;
+}
+.dark-mode .input-group-text {
+    background-color: #343840 !important;
+    border-color: #3a3f47 !important;
+    color: #c8ccd0 !important;
+}
+.dark-mode .custom-select {
+    background-color: #2b2f35;
+    border-color: #3a3f47;
+    color: #e0e0e0;
+}
+
+/* --- Modals --- */
+.dark-mode .modal-content {
+    background-color: #2b2f35 !important;
+    border: 1px solid #3a3f47;
+    color: #e0e0e0;
+}
+.dark-mode .modal-header {
+    border-bottom: 1px solid #3a3f47 !important;
+}
+.dark-mode .modal-footer {
+    border-top: 1px solid #3a3f47 !important;
+}
+
+/* --- Pagination --- */
+.dark-mode .page-link {
+    background-color: #2b2f35;
+    border-color: #3a3f47;
+    color: #5dade2;
+}
+.dark-mode .page-link:hover {
+    background-color: #3a3f47;
+    border-color: #4a4f57;
+    color: #fff;
+}
+.dark-mode .page-item.active .page-link {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: #fff;
+}
+.dark-mode .page-item.disabled .page-link {
+    background-color: #1f2227;
+    border-color: #3a3f47;
+    color: #6c757d;
+}
+
+/* --- Small Box (Dashboard stats) --- */
+.dark-mode .small-box .inner h3,
+.dark-mode .small-box .inner p {
+    color: #fff;
+}
+.dark-mode .small-box .small-box-footer {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* --- Progress bar backgrounds --- */
+.dark-mode .progress.bg-light {
+    background-color: #3a3f47 !important;
+}
+
+/* --- Sidebar dark overrides --- */
+.dark-mode .main-sidebar {
+    background-color: #1f2227 !important;
+}
+.dark-mode .sidebar-dark-teal .brand-link {
+    border-bottom: 1px solid #3a3f47;
+}
+
+/* --- DataTables --- */
+.dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #c8ccd0 !important;
+}
+.dark-mode .dataTables_wrapper .dataTables_info {
+    color: #b0b0b0;
+}
+.dark-mode .dataTables_wrapper .dataTables_filter input,
+.dark-mode .dataTables_wrapper .dataTables_length select {
+    background-color: #2b2f35;
+    border-color: #3a3f47;
+    color: #e0e0e0;
+}
+
+/* --- SweetAlert2 dark overrides --- */
+.dark-mode .swal2-popup {
+    background-color: #2b2f35 !important;
+    color: #e0e0e0 !important;
+}
+.dark-mode .swal2-title {
+    color: #e0e0e0 !important;
+}
+.dark-mode .swal2-html-container {
+    color: #c8ccd0 !important;
+}
+
+/* --- Login page dark mode --- */
+.dark-mode.login-page {
+    background-color: #1a1d21 !important;
+}
+.dark-mode .login-card-body,
+.dark-mode .register-card-body {
+    background-color: #2b2f35 !important;
+    color: #e0e0e0;
+}
+.dark-mode .login-box-msg {
+    color: #5dade2 !important;
+}
+
+/* --- Dark mode toggle button --- */
+#dark-mode-toggle {
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+}
+#dark-mode-toggle:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: rotate(20deg);
+}
+.dark-mode #dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Miscellaneous --- */
+.dark-mode .text-dark {
+    color: #e0e0e0 !important;
+}
+.dark-mode .bg-light {
+    background-color: #252830 !important;
+}
+.dark-mode .border {
+    border-color: #3a3f47 !important;
+}
+.dark-mode .dropdown-divider {
+    border-top-color: #3a3f47;
+}
+.dark-mode a {
+    color: #5dade2;
+}
+.dark-mode .nav-header {
+    color: #8a9099 !important;
+}
+
+/* --- Smooth transitions --- */
+body,
+.content-wrapper,
+.main-footer,
+.main-header,
+.main-sidebar,
+.card,
+.modal-content,
+.form-control,
+.table,
+.page-link {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

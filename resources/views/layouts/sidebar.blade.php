@@ -1,4 +1,4 @@
-<aside class="main-sidebar sidebar-light-teal elevation-4">
+<aside class="main-sidebar sidebar-light-teal elevation-4" id="main-sidebar">
 
     <!-- Logo -->
     <a href="#" class="brand-link bg-warning">

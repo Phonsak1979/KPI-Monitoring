@@ -102,4 +102,64 @@
     });
 </script>
 
+<!-- Dark Mode Toggle Script -->
+<script>
+    $(document).ready(function() {
+        const body = document.getElementById('body-tag') || document.body;
+        const sidebar = document.getElementById('main-sidebar');
+        const navbar = document.getElementById('main-navbar');
+        const toggleBtn = document.getElementById('dark-mode-toggle');
+        const icon = document.getElementById('dark-mode-icon');
+        const isDark = localStorage.getItem('dark-mode') === 'true';
+
+        // Initialize on page load
+        function applyDarkMode(enabled) {
+            if (enabled) {
+                body.classList.add('dark-mode');
+                if (sidebar) {
+                    sidebar.classList.remove('sidebar-light-teal');
+                    sidebar.classList.add('sidebar-dark-teal');
+                }
+                if (navbar) {
+                    navbar.classList.remove('navbar-white', 'navbar-light');
+                    navbar.classList.add('navbar-dark');
+                }
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                    icon.style.color = '#ffc107';
+                }
+            } else {
+                body.classList.remove('dark-mode');
+                if (sidebar) {
+                    sidebar.classList.remove('sidebar-dark-teal');
+                    sidebar.classList.add('sidebar-light-teal');
+                }
+                if (navbar) {
+                    navbar.classList.remove('navbar-dark');
+                    navbar.classList.add('navbar-white', 'navbar-light');
+                }
+                if (icon) {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                    icon.style.color = '';
+                }
+            }
+        }
+
+        // Apply saved preference
+        applyDarkMode(isDark);
+
+        // Toggle handler
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                const currentlyDark = body.classList.contains('dark-mode');
+                const newState = !currentlyDark;
+                localStorage.setItem('dark-mode', newState);
+                applyDarkMode(newState);
+            });
+        }
+    });
+</script>
+
 @yield('JS')
