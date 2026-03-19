@@ -15,8 +15,12 @@
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
+                            @if(Auth::user()->role !== 'user')
                             <a href="{{ route('rankings.create') }}" class="btn btn-outline-success text-bold"><i
                                     class="fas fa-plus"></i> เพิ่มตัวชี้วัด</a>
+                            @else
+                            <div></div>
+                            @endif
                             <form action="{{ route('rankings.index') }}" method="GET">
                                 <div class="input-group">
                                     <input type="text" name="search" class="form-control border-success"
@@ -44,7 +48,7 @@
                                 @foreach ($rankings as $ranking)
                                     <tr>
                                         <td class="text-center">{{ $rankings->firstItem() + $loop->index }}</td>
-                                        <td><span class="badge badge-info"
+                                        <td><span class="badge bg-teal"
                                                 style="min-width: 50px; display: inline-block;">R{{ $ranking->ranking_code }}</span>
                                             {{ $ranking->ranking_name }}
                                         </td>
@@ -58,6 +62,7 @@
                                         <td class="text-center">
                                             <a href="{{ route('rankings.show', $ranking->id) }}"
                                                 class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+                                            @if(Auth::user()->role !== 'user')
                                             <a href="{{ route('rankings.edit', $ranking->id) }}"
                                                 class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                                             <form action="{{ route('rankings.destroy', $ranking->id) }}" method="POST"
@@ -69,6 +74,7 @@
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

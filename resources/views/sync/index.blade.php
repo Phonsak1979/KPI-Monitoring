@@ -38,7 +38,7 @@
                                         <td class="text-center align-middle">{{ $rankings->firstItem() + $loop->index }}
                                         </td>
                                         <td class="align-middle">
-                                            <span class="badge badge-info mr-1"
+                                            <span class="badge bg-teal"
                                                 style="min-width: 50px; display: inline-block;">
                                                 R{{ $kpi->ranking_code }}
                                             </span>

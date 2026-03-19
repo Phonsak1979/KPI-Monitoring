@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class RankingController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin')->only(['create', 'store', 'edit', 'update', 'destroy']);
+    }
+
     /**
      * แสดงหน้ารายการตัวชี้วัดทั้งหมด (หน้า Index / ตารางข้อมูล)
      * มีระบบค้นหาและแบ่งหน้า (Pagination)

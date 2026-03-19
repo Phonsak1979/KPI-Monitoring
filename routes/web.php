@@ -26,15 +26,19 @@ Auth::routes();
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
-Route::resource('departments', DepartmentController::class)->middleware('auth');
+// Resource routes (ทุก role เข้าถึง index/show ได้, admin middleware ตรวจสอบใน Controller)
+Route::middleware('auth')->group(function () {
+    Route::resource('departments', DepartmentController::class);
+    Route::resource('districts', DistrictController::class);
+    Route::resource('hospitals', HospitalController::class);
+    Route::resource('rankings', RankingController::class);
+});
 
-Route::resource('districts', DistrictController::class)->middleware('auth');
+// Sync routes (admin only)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/sync', [SyncController::class, 'index'])->name('sync.index');
+    Route::get('/sync/list', [SyncController::class, 'getSyncList'])->name('sync.list');
+    Route::post('/sync/all', [SyncController::class, 'syncAll'])->name('sync.all');
+    Route::post('/sync/{ranking}', [SyncController::class, 'sync'])->name('sync.update');
+});
 
-Route::resource('hospitals', HospitalController::class)->middleware('auth');
-
-Route::resource('rankings', RankingController::class)->middleware('auth');
-
-Route::get('/sync', [SyncController::class, 'index'])->name('sync.index')->middleware('auth');
-Route::get('/sync/list', [SyncController::class, 'getSyncList'])->name('sync.list')->middleware('auth');
-Route::post('/sync/all', [SyncController::class, 'syncAll'])->name('sync.all')->middleware('auth');
-Route::post('/sync/{ranking}', [SyncController::class, 'sync'])->name('sync.update')->middleware('auth');

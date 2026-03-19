@@ -21,7 +21,7 @@
             <!-- User Info -->
             <div class="info">
                 <a href="#" class="d-block">{{ Auth::user()?->name }}</a>
-                <span class="badge badge-info">{{ Auth::user()?->role }}</span>
+                <span class="badge bg-lime">{{ Auth::user()?->role }}</span>
             </div>
         </div>
 
@@ -99,18 +99,21 @@
                     </a>
                 </li>
 
+
                 <!-- Navbar Header -->
                 <li class="nav-header text-teal">System Menu</li>
-
-                <!-- Navbar Item -->
-                <li class="nav-item">
-                    <a href="{{ route('sync.index') }}" class="nav-link {{ request()->is('sync*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-sync-alt text-primary"></i>
-                        <p class="text-primary">
-                            Sync Data HDC
-                        </p>
-                    </a>
-                </li>
+                @if (Auth::user()->role !== 'user')
+                    <!-- Navbar Item -->
+                    <li class="nav-item">
+                        <a href="{{ route('sync.index') }}"
+                            class="nav-link {{ request()->is('sync*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-sync-alt text-primary"></i>
+                            <p class="text-primary">
+                                MOPH Open-Data
+                            </p>
+                        </a>
+                    </li>
+                @endif
 
                 <!-- Navbar Item 8 -->
                 <li class="nav-item">

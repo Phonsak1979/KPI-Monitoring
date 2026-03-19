@@ -76,7 +76,7 @@
                     <div class="input-group mb-3">
                         <input id="password" type="password"
                             class="form-control @error('password') is-invalid @enderror" name="password" required
-                            autocomplete="current-password" placeholder="รหัสผ่าน 8 หลัก">
+                            autocomplete="current-password" placeholder="Password">
                         <div class="input-group-append">
 
                             <div class="input-group-text" style="cursor: pointer;" onclick="togglePassword()">
@@ -137,7 +137,7 @@
         @if ($errors->has('inactive'))
             Swal.fire({
                 icon: 'warning',
-                title: 'บัญชียังไม่ได้รับสิทธิ์เข้าใช้งาน',
+                title: 'ไม่ได้รับอนุญาตให้ใช้งาน',
                 html: '<span style="font-size: 18px;">กรุณาติดต่อ <b class="text-primary">ผู้ดูแลระบบ</b> เพื่อดำเนินการอนุมัติ</span>',
                 confirmButtonColor: '#28a745',
                 confirmButtonText: '<i class="fas fa-sign-out-alt"></i> ออกจากระบบ'
