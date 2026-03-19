@@ -137,16 +137,37 @@ class SyncController extends Controller
         $province = '34';
 
         try {
-            $response = Http::withoutVerifying()
-                ->timeout(600)
-                ->post('https://opendata.moph.go.th/api/report_data', [
-                    'tableName' => $tableName,
-                    'year' => $year,
-                    'province' => $province,
-                    'type' => 'json'
-                ]);
+            $maxRetries = 4; // ลองเชื่อมต่อใหม่สูงสุด 4 รอบ เมื่อพบเหตุขัดข้อง
+            $attempt = 0;
+            $response = null;
 
-            if ($response->successful()) {
+            while ($attempt < $maxRetries) {
+                try {
+                    $response = Http::withoutVerifying()
+                        ->timeout(600)
+                        ->post('https://opendata.moph.go.th/api/report_data', [
+                            'tableName' => $tableName,
+                            'year' => $year,
+                            'province' => $province,
+                            'type' => 'json'
+                        ]);
+
+                    if ($response->successful()) {
+                        break; // เชื่อมต่อสำเร็จ หลุดจาก loop ทันที
+                    }
+
+                    \Illuminate\Support\Facades\Log::warning("API MOPH Open-Data ไม่ตอบสนอง (ตาราง {$tableName}): HTTP สถานะ " . $response->status() . " (ความพยายามที่ " . ($attempt + 1) . "/{$maxRetries})");
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::warning("API MOPH Open-Data Error (ตาราง {$tableName}): " . $e->getMessage() . " (ความพยายามที่ " . ($attempt + 1) . "/{$maxRetries})");
+                }
+
+                $attempt++;
+                if ($attempt < $maxRetries) {
+                    sleep(6); // หน่วงเวลา 6 วินาทีก่อนลองเสี่ยงโชคใหม่ ป้องกัน API ต้นทางบล็อก
+                }
+            }
+
+            if ($response && $response->successful()) {
                 $data = $response->json();
 
                 if ($data && is_array($data)) {
@@ -261,7 +282,8 @@ class SyncController extends Controller
                     return true;
                 }
             } else {
-                \Illuminate\Support\Facades\Log::warning("API HDC ไม่ตอบสนอง (ตาราง {$tableName}): HTTP สถานะ " . $response->status());
+                $status = $response ? $response->status() : 'Unknown (Connection Failed)';
+                \Illuminate\Support\Facades\Log::error("API MOPH Open-Data ล้มเหลว (ตาราง {$tableName}) ตลอดการลอง {$maxRetries} ครั้ง HTTP สถานะ: {$status}");
             }
 
             // เปลี่ยนมาใช้ Throwable จะดักจับ Error ได้ทุกสายพันธุ์รวมถึงแรมเต็ม

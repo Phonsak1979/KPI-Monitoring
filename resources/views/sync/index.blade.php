@@ -11,7 +11,7 @@
 
                 <div class="card card-success">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="card-title mb-0"><i class="fas fa-server mr-1"></i> Sync Data From HDC</h3>
+                        <h3 class="card-title mb-0"><i class="fas fa-server mr-1"></i> Sync MOPH Open-Data</h3>
                     </div>
                     <div class="card-body">
 
@@ -181,7 +181,7 @@
                                 let failCount = 0;
                                 let failedItems = [];
 
-                                // จำชื่อตารางที่ซิงค์ไปแล้ว ป้องกันการดึงซ้ำ (ลดภาระ HDC)
+                                // จำชื่อตารางที่ซิงค์ไปแล้ว ป้องกันการดึงซ้ำ (ลดภาระ MOPH Open-Data)
                                 let syncedTables = [];
 
                                 Swal.fire({
@@ -247,7 +247,7 @@
                                         return;
                                     }
 
-                                    // 2. ถ้าเป็นตารางซ้ำที่เคยดึงไปแล้ว ให้ถือว่า "สำเร็จ" และข้ามไปเลย (ช่วยเซิร์ฟเวอร์ HDC)
+                                    // 2. ถ้าเป็นตารางซ้ำที่เคยดึงไปแล้ว ให้ถือว่า "สำเร็จ" และข้ามไปเลย (ช่วยเซิร์ฟเวอร์ MOPH Open-Data)
                                     if (syncedTables.includes(safeTableName)) {
                                         successCount++;
                                         current++;
@@ -271,7 +271,7 @@
                                                 failCount++;
                                                 failedItems.push('R' + kpi
                                                     .ranking_code +
-                                                    ' (HDC Server ไม่ตอบสนอง)');
+                                                    ' (MOPH Open-Data ไม่ตอบสนอง)');
                                             }
                                             current++;
                                             // หน่วงเวลา 5 วินาที (5000 ms) ก่อนดึงตัวต่อไป
@@ -285,8 +285,8 @@
                                             } else {
                                                 failCount++;
                                                 let reason = status === 'timeout' ?
-                                                    ' (HDC API Timeout)' :
-                                                    ' (HDC Connection Error)';
+                                                    ' (MOPH Open-Data API Timeout)' :
+                                                    ' (MOPH Open-Data Connection Error)';
                                                 failedItems.push('R' + kpi
                                                     .ranking_code + reason);
                                             }
@@ -335,7 +335,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: 'กำลังเชื่อมต่อ HDC',
+                        title: 'กำลังเชื่อมต่อ MOPH Open-Data',
                         html: '<div class="mt-2">กำลังดึงข้อมูล : <b class="text-primary">R' +
                             code +
                             '</b> อาจใช้เวลาสักครู่...</div>',
