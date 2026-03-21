@@ -20,6 +20,19 @@ class DashboardController extends Controller
         // Collection ข้อมูลหน่วยบริการ โดยให้ key คือ รหัสหน่วยบริการ เพื่อง่ายต่อการเอาค่าไปแมปแสดงผล
         $hospitals = \App\Models\Hospital::get()->keyBy('hospital_code');
 
+        // เตรียมตัวแปรสำหรับเก็บข้อมูลรายโรงพยาบาล
+        $hospitalStats = [];
+        foreach ($hospitals as $hcode => $h) {
+            $hospitalStats[$hcode] = [
+                'hospcode' => $hcode,
+                'hospital_name' => $h->hospital_name,
+                'passed_kpi' => 0,
+                'failed_kpi' => 0,
+                'total_weight' => 0,
+                'total_score' => 0,
+            ];
+        }
+
         // 2. วนลูปเพื่อประมวลผลและคำนวณค่า target, result, เปอร์เซ็นต์ ของตัวชี้วัดแต่ละตัว
         foreach ($rankings as $ranking) {
             // ตั้งค่าเริ่มต้นของผลลัพธ์รวมภาพรวม (ระดับบน) ให้เป็น 0 ไว้ก่อน
@@ -78,8 +91,8 @@ class DashboardController extends Controller
                             SUM(IFNULL(1b260_2_9, 0) + IFNULL(1b260_2_18, 0) + IFNULL(1b260_2_30, 0) + IFNULL(1b260_2_42, 0) + IFNULL(1b260_2_60, 0)) AS result
                         ";
                     }
-                }// <--- ต้องมีปีกกาปิดของกลุ่ม s_childdev_specialpp ตรงนี้ก่อนครับ!
-                
+                } // <--- ต้องมีปีกกาปิดของกลุ่ม s_childdev_specialpp ตรงนี้ก่อนครับ!
+
                 // =========================================================
                 // 2. กลุ่มตารางอื่นๆ (คัดกรองยาสูบ R28.1) ให้ขึ้น if ใหม่เลย
                 // =========================================================
@@ -129,6 +142,24 @@ class DashboardController extends Controller
 
                 // เก็บรายละเอียดรายโรงพยาบาลใส่กลับในตัวชี้วัดนั้นๆ เผื่อเรียกใช้ในจุดอื่น (เช่น แสดงใน Modal แบบละเอียด)
                 $ranking->details = $details;
+
+                // สะสมคะแนนรายโรงพยาบาล
+                foreach ($details as $item) {
+                    $hospcode = $item->hospcode;
+                    if (!isset($hospitalStats[$hospcode])) continue;
+
+                    if ($item->percent >= $ranking->target_value) {
+                        $hospitalStats[$hospcode]['passed_kpi']++;
+                    } else {
+                        $hospitalStats[$hospcode]['failed_kpi']++;
+                    }
+
+                    $weight = $ranking->weight ?? 0;
+                    $score = ($item->rank / 5) * $weight;
+
+                    $hospitalStats[$hospcode]['total_weight'] += $weight;
+                    $hospitalStats[$hospcode]['total_score'] += $score;
+                }
 
                 // 4. คำนวณผลงานรวมภาพรวม (นำผลของโรงพยาบาลย่อยมารวมกัน)
                 $ranking->total_target = $details->sum('target');
@@ -184,30 +215,62 @@ class DashboardController extends Controller
             $percentScore = ($totalScore / $totalWeight) * 100;
         }
 
-        // 8. สร้างระบบแบ่งหน้า (Pagination) แบบ Manual
+        // 8. คำนวณร้อยละของแต่ละโรงพยาบาล และสร้าง Pagination สำหรับตาราง
+        foreach ($hospitalStats as &$stat) {
+            if ($stat['total_weight'] > 0) {
+                $stat['percent_score'] = ($stat['total_score'] / $stat['total_weight']) * 100;
+            } else {
+                $stat['percent_score'] = 0;
+            }
+        }
+        unset($stat);
+
+        $hospitalStatsCollection = collect(array_values($hospitalStats))->sortBy('hospcode')->values();
+
+        // เตรียมข้อมูลสำหรับแสดงกราฟแท่ง (Bar Chart)
+        $chartLabels = [];
+        $chartData = [];
+        $chartColors = [];
+
+        foreach ($hospitalStatsCollection as $stat) {
+            $chartLabels[] = "{$stat['hospcode']}";
+            $chartData[] = round($stat['percent_score'], 2);
+
+            if ($stat['percent_score'] >= 80) {
+                $chartColors[] = 'rgba(40, 167, 69, 0.8)'; // success
+            } elseif ($stat['percent_score'] >= 50) {
+                $chartColors[] = 'rgba(255, 193, 7, 0.8)'; // warning
+            } else {
+                $chartColors[] = 'rgba(220, 53, 69, 0.8)'; // danger
+            }
+        }
+
+
+
         $page = \Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1;
         $perPage = 50;
 
-        $paginatedRankings = new \Illuminate\Pagination\LengthAwarePaginator(
-            $rankings->forPage($page, $perPage)->values(),
-            $rankings->count(),
+        $paginatedHospitals = new \Illuminate\Pagination\LengthAwarePaginator(
+            $hospitalStatsCollection->forPage($page, $perPage)->values(),
+            $hospitalStatsCollection->count(),
             $perPage,
             $page,
             ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath()]
         );
 
-        $rankings = $paginatedRankings;
-
         // 9. ส่งตัวแปรทั้งหมดไปประมวลผลแสดงหน้าจอบน View
         return view('dashboard', compact(
-            'rankings',
+            'paginatedHospitals',
             'totalHospitals',
             'totalRankings',
             'passedRankings',
             'failedRankings',
             'totalWeight',
             'totalScore',
-            'percentScore'
+            'percentScore',
+            'chartLabels',
+            'chartData',
+            'chartColors'
         ));
     }
 

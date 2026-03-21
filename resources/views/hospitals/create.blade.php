@@ -35,7 +35,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="district_id">อำเภอ</label>
-                                <select name="district_id" id="district_id" class="form-control">
+                                <select name="district_id" id="district_id" class="custom-select">
                                     <option value="">--เลือกอำเภอ--</option>
                                     @foreach ($districts as $district)
                                         <option value="{{ $district->id }}">{{ $district->district_name }}</option>

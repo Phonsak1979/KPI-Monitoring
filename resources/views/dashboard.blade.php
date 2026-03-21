@@ -3,19 +3,50 @@
 @section('title', 'หน้าแรก')
 
 @section('content')
+
+    <!-- เพิ่ม icon ใน small-box หน้าจอ mobile -->
+    <style>
+        @media (max-width: 767.98px) {
+            .small-box .icon {
+                display: block !important;
+            }
+            .small-box .icon > i {
+                font-size: 70px !important;
+                top: 15px !important;
+                right: 15px !important;
+                opacity: 1.0;
+            }
+        }
+    </style>
+
     <div class="container-fluid p-3">
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <section class="content">
                     <div class="container-fluid">
 
-                        <!-- small box Row 1 -->
+                        <!-- small box Row -->
                         <div class="row">
-                            <div class="col-lg-4 col-12">
-                                <div class="small-box bg-info">
+                            {{-- small box 1 --}}
+                            <div class="col-lg-4 col-md-4 col-sm-12">
+                                <div class="small-box bg-gradient-primary">
                                     <div class="inner">
-                                        <h3>{{ number_format($totalRankings) }}</h3>
-                                        <p>จำนวน KPI (HDC)</p>
+                                        <h3>{{ number_format($totalHospitals) }} <small>หน่วยบริการ</small></h3>
+                                        <p>(HCODE)</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-h-square"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer">รายละเอียด <i
+                                            class="fas fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                            {{-- small box 2 --}}
+                            <div class="col-lg-4 col-md-4 col-sm-12">
+                                <div class="small-box bg-gradient-warning">
+                                    <div class="inner">
+                                        <h3>{{ number_format($totalRankings) }} <small>ตัวชี้วัด</small></h3>
+                                        <p>(HDC-KPI)</p>
                                     </div>
                                     <div class="icon">
                                         <i class="far fa-list-alt"></i>
@@ -24,27 +55,15 @@
                                             class="fas fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-6">
-                                <div class="small-box bg-success">
+                            {{-- small box 3 --}}
+                            <div class="col-lg-4 col-md-4 col-sm-12">
+                                <div class="small-box bg-indigo">
                                     <div class="inner">
-                                        <h3>{{ number_format($passedRankings) }}</h3>
-                                        <p>จำนวน KPI ผ่านเกณฑ์</p>
+                                        <h3>{{ number_format($totalWeight, 2) }} <small>คะแนน</small></h3>
+                                        <p>(Weight)</p>
                                     </div>
                                     <div class="icon">
                                         <i class="fas fa-tasks"></i>
-                                    </div>
-                                    <a href="#" class="small-box-footer">รายละเอียด <i
-                                            class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-6">
-                                <div class="small-box bg-danger">
-                                    <div class="inner">
-                                        <h3>{{ number_format($failedRankings) }}</h3>
-                                        <p>จำนวน KPI ไม่ผ่านเกณฑ์</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-window-close"></i>
                                     </div>
                                     <a href="#" class="small-box-footer">รายละเอียด <i
                                             class="fas fa-arrow-circle-right"></i></a>
@@ -52,45 +71,42 @@
                             </div>
                         </div>
 
-                        <!-- Small Box Row 2 -->
+                        <!-- Bar Chart -->
                         <div class="row">
-                            <div class="col-lg-4 col-6">
-                                <div class="small-box bg-indigo">
-                                    <div class="inner">
-                                        <h3>{{ number_format($totalWeight, 2) }}</h3>
-                                        <p>น้ำหนักคะแนนรวม (Weight)</p>
+                            <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-header bg-gradient-success">
+                                        <h3 class="card-title"><i class="fas fa-chart-bar mr-1"></i> ร้อยละผลงาน HDC-KPI ระดับหน่วยบริการ</h3>
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="icon">
-                                        <i class="fas fa-server"></i>
+                                    <div class="card-body">
+                                        <div class="chart">
+                                            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                        </div>
                                     </div>
-                                    <a href="#" class="small-box-footer">รายละเอียด <i
-                                            class="fas fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-6">
-                                <div class="small-box bg-warning">
-                                    <div class="inner">
-                                        <h3>{{ number_format($totalScore, 2) }}</h3>
-                                        <p>คะแนนรวม (Score)</p>
+                            
+                            <!-- Donut Chart -->
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-header bg-gradient-primary">
+                                        <h3 class="card-title"><i class="fas fa-chart-pie mr-1"></i> รวมทุกหน่วยบริการ</h3>
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="icon">
-                                        <i class="fas fa-tasks"></i>
+                                    <div class="card-body">
+                                        <div class="chart">
+                                            <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                        </div>
                                     </div>
-                                    <a href="#" class="small-box-footer">รายละเอียด <i
-                                            class="fas fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-12">
-                                <div class="small-box bg-teal">
-                                    <div class="inner">
-                                        <h3>{{ number_format($percentScore, 2) }} %</h3>
-                                        <p>คะแนนรวม (ร้อยละ)</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-chart-pie"></i>
-                                    </div>
-                                    <a href="#" class="small-box-footer">รายละเอียด <i
-                                            class="fas fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -99,75 +115,76 @@
                         <div class="row">
                             <div class="col-lg-12">
 
-                                <div class="card card-success">
-                                    <div class="card-header">
-                                        <h3 class="card-title"><i class="fas fa-list mr-1"></i> รายงาน KPI (HDC)</h3>
+                                <div class="card">
+                                    <div class="card-header bg-gradient-success">
+                                        <h3 class="card-title"><i class="fas fa-list mr-1"></i> รายงาน HDC-KPI ระดับหน่วยบริการ</h3>
                                     </div>
                                     <div class="card-body p-0">
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center" style="width: 5%">ลำดับ</th>
-                                                    <th class="text-center" style="width: 60%">ชื่อตัวชี้วัด</th>
-                                                    <th class="text-right" style="width: 8%">เป้าหมาย</th>
-                                                    <th class="text-right" style="width: 8%">ผลงาน</th>
-                                                    <th class="text-center" style="width: 8%">ร้อยละ</th>
-                                                    <th class="text-center" style="width: 8%">Rank</th>
-                                                    <th class="text-center" style="width: 3%"><i class="fas fa-search-plus"></i></th>
+                                                    <th class="text-center" style="width: 10%">ลำดับ</th>
+                                                    <th class="text-center" style="width: 35%">หน่วยบริการ</th>
+                                                    <th class="text-center" style="width: 15%">KPI ผ่านเกณฑ์</th>
+                                                    <th class="text-center" style="width: 15%">KPI ไม่ผ่านเกณฑ์</th>
+                                                    <th class="text-center" style="width: 10%">คะแนนรวม</th>
+                                                    <th class="text-center" style="width: 10%">ร้อยละ</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($rankings as $index => $ranking)
-                                                    @php
-                                                        $percent = $ranking->percent;
-                                                        if ($percent >= $ranking->target_value) {
-                                                            $badgeClass = 'bg-success';
-                                                        } else {
-                                                            $badgeClass = 'bg-danger';
-                                                        }
-                                                    @endphp
+                                                @forelse ($paginatedHospitals as $index => $hospital)
                                                     <tr>
-                                                        <td class="text-center">{{ $rankings->firstItem() + $index }}</td>
+                                                        <td class="text-center">{{ $paginatedHospitals->firstItem() + $index }}</td>
                                                         <td>
-                                                            <div>
-                                                                <span class="badge bg-info" style="min-width: 50px; display: inline-block;">R{{ $ranking->ranking_code }}</span>
-                                                                {{ $ranking->ranking_name }} 
-                                                                <span class="badge bg-teal" style="min-width: 30px; display: inline-block;">{{ $ranking->weight }}</span>
-                                                                <a href="{{ $ranking->hdc_link }}" target="_blank" class="badge badge-primary" style="min-width: 30px; display: inline-block;" title="HDC Link">
-                                                                    <i class="fas fa-link"></i>
-                                                                </a>
-                                                            </div>
+                                                            <span class="badge badge-info" style="min-width: 60px; display: inline-block;">{{ $hospital['hospcode'] }}</span>
+                                                            {{ $hospital['hospital_name'] }}
                                                         </td>
-                                                        <td class="text-right text-bold ">
-                                                            {{ number_format($ranking->total_target) }}
-                                                        </td>
-                                                        <td class="text-right text-bold">
-                                                            {{ number_format($ranking->total_result) }}
-                                                        </td>
+                                                        <td class="text-center text-bold text-success">{{ number_format($hospital['passed_kpi']) }}</td>
+                                                        <td class="text-center text-bold text-danger">{{ number_format($hospital['failed_kpi']) }}</td>
+                                                        <td class="text-center text-bold">{{ number_format($hospital['total_score'], 2) }}</td>
                                                         <td class="text-center">
-                                                            <span class="badge {{ $badgeClass }}"
-                                                                style="min-width: 50px; display: inline-block;">{{ number_format($percent, 2) }}%</span>
+                                                            @if($hospital['percent_score'] >= 80)
+                                                                <span class="badge bg-success" style="min-width: 60px; display: inline-block;">{{ number_format($hospital['percent_score'], 2) }}%</span>
+                                                            @elseif($hospital['percent_score'] >= 50)
+                                                                <span class="badge bg-warning" style="min-width: 60px; display: inline-block;">{{ number_format($hospital['percent_score'], 2) }}%</span>
+                                                            @else
+                                                                <span class="badge bg-danger" style="min-width: 60px; display: inline-block;">{{ number_format($hospital['percent_score'], 2) }}%</span>
+                                                            @endif
                                                         </td>
-                                                        <td class="text-center">
-                                                            <span class="badge bg-primary"
-                                                                style="min-width: 50px; display: inline-block;">{{ $ranking->rank }}</span>
-                                                        </td>
-                                                        <td class="text-center"><a href="#" data-toggle="modal"
-                                                                data-target="#modal-kpi-{{ $ranking->id }}"><i
-                                                                    class="fas fa-search-plus text-primary"></i></a></td>
                                                     </tr>
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted py-4">ไม่พบข้อมูล</td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
+                                            <tfoot class="bg-light font-weight-bold">
+                                                <tr style="font-size: 1.25rem;">
+                                                    <td colspan="2" class="text-center" style="border-bottom-left-radius: 10px;">รวมทุกหน่วยบริการ</td>
+                                                    <td class="text-center text-success">{{ number_format($passedRankings) }}</td>
+                                                    <td class="text-center text-danger">{{ number_format($failedRankings) }}</td>
+                                                    <td class="text-center text-dark">{{ number_format($totalScore, 2) }}</td>
+                                                    <td class="text-center" style="border-bottom-right-radius: 10px;">
+                                                        @if($percentScore >= 80)
+                                                            <span class="badge bg-success" style="min-width: 60px; display: inline-block;">{{ number_format($percentScore, 2) }}%</span>
+                                                        @elseif($percentScore >= 50)
+                                                            <span class="badge bg-warning" style="min-width: 60px; display: inline-block;">{{ number_format($percentScore, 2) }}%</span>
+                                                        @else
+                                                            <span class="badge bg-danger" style="min-width: 60px; display: inline-block;">{{ number_format($percentScore, 2) }}%</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-3">
                                     <div class="ml-2">
-                                        รายการที่ {{ $rankings->firstItem() ?? 0 }} - {{ $rankings->lastItem() ?? 0 }} จาก
-                                        {{ $rankings->total() }} รายการ
+                                        รายการที่ {{ $paginatedHospitals->firstItem() ?? 0 }} - {{ $paginatedHospitals->lastItem() ?? 0 }} จาก
+                                        {{ $paginatedHospitals->total() }} รายการ
                                     </div>
                                     <div class="mr-2">
-                                        {{ $rankings->appends(request()->query())->links('pagination::bootstrap-4') }}
+                                        {{ $paginatedHospitals->appends(request()->query())->links('pagination::bootstrap-4') }}
                                     </div>
                                 </div>
                             </div>
@@ -177,107 +194,156 @@
 
             </div>
             </section>
-
-            <!-- Modals Popup KPI -->
-            @foreach ($rankings as $ranking)
-                @if (isset($ranking->details))
-                    <div class="modal fade" id="modal-kpi-{{ $ranking->id }}" tabindex="-1" role="dialog"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-xl" role="document">
-                            <div class="modal-content shadow-lg" style="border-radius: 10px;">
-                                <div class="modal-header bg-success border-0"
-                                    style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
-                                    <h5 class="modal-title">
-                                        {{ $ranking->ranking_code }} {{ $ranking->ranking_name }} (ร้อยละ
-                                        {{ $ranking->target_value }})
-                                    </h5>
-                                    <button type="button" class="close text-white" data-dismiss="modal"
-                                        aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center" style="width: 8%">ลำดับ</th>
-                                                    <th class="text-center" style="width: 33%">หน่วยบริการ</th>
-                                                    <th class="text-right" style="width: 12%">เป้าหมาย</th>
-                                                    <th class="text-right" style="width: 12%">ผลงาน</th>
-                                                    <th class="text-center" style="width: 2%"></th>
-                                                    <th class="text-center" style="width: 23%">ร้อยละ (%)</th>
-                                                    <th class="text-center" style="width: 10%">Rank</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($ranking->details as $detail)
-                                                    <tr>
-                                                        <td class="text-center">{{ $loop->iteration }}</td>
-                                                        <td><span class="badge badge-info"
-                                                                style="min-width: 50px; display: inline-block;">{{ $detail->hospcode }}</span>
-                                                            {{ $detail->hospital_name }}
-                                                        </td>
-                                                        <td class="text-right">{{ number_format($detail->target) }}
-                                                        </td>
-                                                        <td class="text-right">{{ number_format($detail->result) }}
-                                                        </td>
-                                                        <td></td>
-                                                        <td class="text-center">
-                                                            @php
-                                                                $detailPercent = $detail->percent;
-                                                                $detailBadgeClass =
-                                                                    $detailPercent >= $ranking->target_value
-                                                                        ? 'bg-success'
-                                                                        : 'bg-danger';
-                                                                $detailTextClass =
-                                                                    $detailPercent >= $ranking->target_value
-                                                                        ? 'text-success'
-                                                                        : 'text-danger';
-                                                            @endphp
-                                                            <div class="progress progress-sm mb-1 bg-light"
-                                                                style="height: 8px; border-radius: 10px;">
-                                                                <div class="progress-bar {{ $detailBadgeClass }}"
-                                                                    role="progressbar"
-                                                                    style="width: {{ min(100, $detailPercent) }}%; border-radius: 10px;">
-                                                                </div>
-                                                            </div>
-                                                            <small
-                                                                class="font-weight-bold {{ $detailTextClass }}">{{ number_format($detailPercent, 2) }}%</small>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <span class="badge bg-primary"
-                                                                style="min-width: 50px; display: inline-block;">{{ $detail->rank }}</span>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                            <tfoot class="bg-light font-weight-bold">
-                                                <tr style="font-size: 1.15rem;">
-                                                    <td colspan="2" class="text-center "
-                                                        style="border-bottom-left-radius: 10px;">รวมทั้งหมด</td>
-                                                    <td class="text-right text-dark">
-                                                        {{ number_format($ranking->total_target) }}</td>
-                                                    <td class="text-right text-dark">
-                                                        {{ number_format($ranking->total_result) }}</td>
-                                                    <td></td>
-                                                    <td class="text-center text-primary">
-                                                        {{ number_format($ranking->percent, 2) }}%</td>
-                                                    <td class="text-center" style="border-bottom-right-radius: 10px;">
-                                                        <span class="badge bg-primary"
-                                                            style="min-width: 50px; display: inline-block;">{{ $ranking->rank }}</span>
-                                                    </td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            @endforeach
         </div>
     </div>
     </div>
+@endsection
+
+@section('JS')
+<script>
+    $(function () {
+        var chartLabels = @json($chartLabels);
+        var chartData = @json($chartData);
+        var chartColors = @json($chartColors);
+        var chartBorderColors = chartColors.map(function(c) {
+            return c.replace(/0\.\d+\)/, '1)'); // Replace alpha to 1 for solid borders
+        });
+
+        var barChartCanvas = $('#barChart').get(0).getContext('2d');
+
+        var barChartData = {
+            labels: chartLabels,
+            datasets: [
+                {
+                    label: 'ร้อยละความสำเร็จ',
+                    backgroundColor: chartColors,
+                    borderColor: chartBorderColors,
+                    borderWidth: 2,
+                    borderRadius: 10,
+                    borderSkipped: false,
+                    barPercentage: 0.65,
+                    categoryPercentage: 0.9,
+                    data: chartData
+                }
+            ]
+        };
+
+        var barChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            datasetFill: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: 100,
+                        stepSize: 20,
+                        fontFamily: "'Sarabun', sans-serif",
+                        fontStyle: 'bold',
+                        fontSize: 14
+                    },
+                    scaleLabel: {
+                        display: false,
+                        labelString: 'ร้อยละ (%)'
+                    },
+                    gridLines: {
+                        color: "rgba(0,0,0,0.05)"
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        autoSkip: false,
+                        fontFamily: "'Sarabun', sans-serif",
+                        fontStyle: 'bold',
+                        fontSize: 14
+                    },
+                    gridLines: {
+                        display: false
+                    }
+                }]
+            },
+            legend: {
+                display: false
+            },
+            tooltips: {
+                titleFontFamily: "'Sarabun', sans-serif",
+                titleFontSize: 15,
+                bodyFontFamily: "'Sarabun', sans-serif",
+                bodyFontSize: 14,
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        return tooltipItem.yLabel + '%';
+                    }
+                }
+            }
+        };
+
+        new Chart(barChartCanvas, {
+            type: 'bar',
+            data: barChartData,
+            options: barChartOptions
+        });
+
+        // ==========================================
+        // Donut Chart
+        // ==========================================
+        var donutScore = @json(round($percentScore, 2));
+        var donutRemaining = +(100 - donutScore).toFixed(2);
+        
+        var donutColor = donutScore >= 80 ? 'rgba(40, 167, 69, 0.8)' : (donutScore >= 50 ? 'rgba(255, 193, 7, 0.8)' : 'rgba(220, 53, 69, 0.8)');
+        var donutBorderColor = donutScore >= 80 ? 'rgba(40, 167, 69, 1)' : (donutScore >= 50 ? 'rgba(255, 193, 7, 1)' : 'rgba(220, 53, 69, 1)');
+
+        var donutChartCanvas = $('#donutChart').get(0).getContext('2d');
+        var donutData = {
+          labels: [
+              'คะแนนรวม (ร้อยละ)',
+              
+          ],
+          datasets: [
+            {
+              data: [donutScore, donutRemaining],
+              backgroundColor : [donutColor, 'rgba(0,0,0,0.05)'],
+              borderColor: [donutBorderColor, 'rgba(0,0,0,0.1)'],
+              borderWidth: 2
+            }
+          ]
+        }
+        var donutOptions = {
+          maintainAspectRatio : false,
+          responsive : true,
+          cutoutPercentage: 65,
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+                fontFamily: "'Sarabun', sans-serif",
+                fontSize: 14,
+                fontStyle: 'bold'
+            }
+          },
+          tooltips: {
+            titleFontFamily: "'Sarabun', sans-serif",
+            bodyFontFamily: "'Sarabun', sans-serif",
+            bodyFontSize: 14,
+            callbacks: {
+                label: function(tooltipItem, data) {
+                    var label = data.labels[tooltipItem.index] || '';
+                    if (label) {
+                        label += ': ';
+                    }
+                    label += data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] + '%';
+                    return label;
+                }
+            }
+          }
+        }
+        
+        new Chart(donutChartCanvas, {
+          type: 'doughnut',
+          data: donutData,
+          options: donutOptions
+        });
+    });
+</script>
 @endsection

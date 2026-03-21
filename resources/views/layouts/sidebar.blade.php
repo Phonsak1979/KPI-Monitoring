@@ -44,7 +44,7 @@
                 </li>
                 <!-- Navbar Item -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('report.index') }}" class="nav-link {{ request()->is('report*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-chart-bar"></i>
                         <p>
                             รายงาน

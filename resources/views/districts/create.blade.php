@@ -9,8 +9,8 @@
 
             <div class="col-md-10">
 
-                <div class="card card-success">
-                    <div class="card-header d-flex">
+                <div class="card">
+                    <div class="card-header bg-gradient-success">
                         <h3 class="card-title"><i class="fas fa-cog"></i> เพิ่มอำเภอ</h3>
                     </div>
                     <form action="{{ route('districts.store') }}" method="POST">

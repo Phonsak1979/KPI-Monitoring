@@ -35,7 +35,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="department_id">กลุ่มงาน/ฝ่าย</label>
-                                <select name="department_id" id="department_id" class="form-control">
+                                <select name="department_id" id="department_id" class="custom-select">
                                     <option value="">--เลือกกลุ่มงาน/ฝ่าย--</option>
                                     @foreach ($departments as $department)
                                         <option value="{{ $department->id }}">{{ $department->department_name }}</option>

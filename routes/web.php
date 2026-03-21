@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\HospitalController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\SyncController;
 Auth::routes();
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+Route::get('/report', [ReportController::class, 'index'])->name('report.index')->middleware('auth');
 
 // Resource routes (ทุก role เข้าถึง index/show ได้, admin middleware ตรวจสอบใน Controller)
 Route::middleware('auth')->group(function () {
@@ -41,4 +43,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/sync/all', [SyncController::class, 'syncAll'])->name('sync.all');
     Route::post('/sync/{ranking}', [SyncController::class, 'sync'])->name('sync.update');
 });
+
+
 

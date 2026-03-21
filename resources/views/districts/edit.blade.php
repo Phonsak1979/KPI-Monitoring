@@ -9,8 +9,8 @@
 
             <div class="col-md-10">
 
-                <div class="card card-warning">
-                    <div class="card-header d-flex">
+                <div class="card">
+                    <div class="card-header bg-gradient-warning">
                         <h3 class="card-title"><i class="fas fa-cog"></i> แก้ไขอำเภอ</h3>
                     </div>
                     <form action="{{ route('districts.update', $district->id) }}" method="POST">

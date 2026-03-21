@@ -6,8 +6,8 @@
     <div class="container-fluid p-3">
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <div class="card card-info">
-                    <div class="card-header d-flex">
+                <div class="card">
+                    <div class="card-header bg-gradient-info">
                         <h3 class="card-title"><i class="fas fa-cog"></i> แสดงอำเภอ</h3>
                     </div>
                     <div class="card-body">

@@ -10,7 +10,7 @@
             <div class="col-md-10">
 
                 <div class="card card-warning">
-                    <div class="card-header d-flex">
+                    <div class="card-header">
                         <h3 class="card-title"><i class="fas fa-cog"></i> แก้ไขตัวชี้วัด</h3>
                     </div>
                     <form action="{{ route('rankings.update', $ranking->id) }}" method="POST">
@@ -35,7 +35,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="department_id">กลุ่มงาน/ฝ่าย</label>
-                                <select name="department_id" class="form-control" id="department_id">
+                                <select name="department_id" class="custom-select" id="department_id">
                                     <option value="">--เลือกกลุ่มงาน/ฝ่าย--</option>
                                     @foreach ($departments as $department)
                                         <option value="{{ $department->id }}"

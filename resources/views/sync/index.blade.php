@@ -9,8 +9,8 @@
 
             <div class="col-md-10">
 
-                <div class="card card-success">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card">
+                    <div class="card-header bg-gradient-success">
                         <h3 class="card-title mb-0"><i class="fas fa-server mr-1"></i> Sync MOPH Open-Data</h3>
                     </div>
                     <div class="card-body">
