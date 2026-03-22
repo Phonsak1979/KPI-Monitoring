@@ -10,7 +10,7 @@
 
                 <div class="card">
                     <div class="card-header bg-gradient-success">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> ตัวชี้วัด</h3>
+                        <h3 class="card-title"><i class="fas fa-th-list mr-2"></i><b>ตัวชี้วัด</b></h3>
 
                     </div>
                     <div class="card-body">

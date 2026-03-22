@@ -8,7 +8,7 @@
             <div class="col-md-10">
                 <div class="card">
                     <div class="card-header bg-gradient-info">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> แสดงกลุ่มงาน/ฝ่าย</h3>
+                        <h3 class="card-title"><i class="fas fa-hospital-user mr-2"></i><b>แสดงกลุ่มงาน/ฝ่าย</b></h3>
                     </div>
                     <div class="card-body">
                         <div class="form-group">

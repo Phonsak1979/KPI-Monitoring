@@ -11,14 +11,14 @@
 
                 <div class="card">
                     <div class="card-header bg-gradient-success">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> เพิ่มกลุ่มงาน/ฝ่าย</h3>
+                        <h3 class="card-title"><i class="fas fa-hospital-user mr-2"></i><b>เพิ่มกลุ่มงาน/ฝ่าย</b></h3>
                     </div>
 
                     <form action="{{ route('departments.store') }}" method="POST">
                         @csrf
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="department_name">ชื่อกลุ่มงาน/ฝ่าย</label>
+                                <label for="department_name">ชื่อกลุ่มงาน/ฝ่าย <span class="text-danger">*</span></label>
                                 <input type="text" name="department_name" class="form-control" id="department_name"
                                     placeholder="ชื่อกลุ่มงาน/ฝ่าย เช่น กลุ่มงานสุขภาพดิจิทัล">
                                 @error('department_name')

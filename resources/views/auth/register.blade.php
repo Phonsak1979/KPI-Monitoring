@@ -93,7 +93,7 @@
                     <label for="password">รหัสผ่าน</label>
                     <div class="input-group mb-3">
                         <input id="password" type="password" class="form-control" name="password" required
-                            placeholder="รหัสผ่าน 8 หลัก">
+                            placeholder="รหัสผ่านอย่างน้อย 8 ตัวอักษร">
                         <div class="input-group-append">
                             <div class="input-group-text" style="cursor: pointer;" onclick="togglePassword1()">
                                 <span class="fas fa-eye text-success" id="togglePasswordIcon1"></span>

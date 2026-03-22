@@ -9,9 +9,9 @@
 
             <div class="col-md-10">
 
-                <div class="card card-info">
-                    <div class="card-header d-flex">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> รายละเอียดตัวชี้วัด</h3>
+                <div class="card">
+                    <div class="card-header bg-gradient-info">
+                        <h3 class="card-title"><i class="fas fa-th-list mr-2"></i><b>รายละเอียดตัวชี้วัด</b></h3>
                     </div>
                     <div class="card-body">
 

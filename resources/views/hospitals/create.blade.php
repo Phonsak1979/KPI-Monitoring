@@ -9,16 +9,16 @@
 
             <div class="col-md-10">
 
-                <div class="card card-success">
-                    <div class="card-header d-flex">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> เพิ่มหน่วยบริการ</h3>
+                <div class="card">
+                    <div class="card-header bg-gradient-success">
+                        <h3 class="card-title"><i class="fas fa-hospital-alt mr-2"></i><b>เพิ่มหน่วยบริการ</b></h3>
                     </div>
 
                     <form action="{{ route('hospitals.store') }}" method="POST">
                         @csrf
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="hospital_code">รหัสหน่วยบริการ</label>
+                                <label for="hospital_code">รหัสหน่วยบริการ <span class="text-danger">*</span></label>
                                 <input type="text" name="hospital_code" class="form-control" id="hospital_code"
                                     value="{{ old('hospital_code') }}" placeholder="รหัสสถานบริการ 5 หลัก">
                                 @error('hospital_code')
@@ -26,7 +26,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label for="hospital_name">ชื่อหน่วยบริการ</label>
+                                <label for="hospital_name">ชื่อหน่วยบริการ <span class="text-danger">*</span></label>
                                 <input type="text" name="hospital_name" class="form-control" id="hospital_name"
                                     value="{{ old('hospital_name') }}" placeholder="เช่น รพ.ดอนมดแดง /รพ.สต.เหล่าแดง">
                                 @error('hospital_name')
@@ -34,7 +34,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label for="district_id">อำเภอ</label>
+                                <label for="district_id">อำเภอ <span class="text-danger">*</span></label>
                                 <select name="district_id" id="district_id" class="custom-select">
                                     <option value="">--เลือกอำเภอ--</option>
                                     @foreach ($districts as $district)

@@ -48,15 +48,15 @@
                     สวัสดี : {{ Auth::user()->name }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-user mr-2 text-teal"></i>
-                        ข้อมูลส่วนตัว
+                    <a class="dropdown-item" href="{{ route('user.detail') }}">
+                        <i class="fas fa-user-cog mr-2 text-teal"></i>
+                        ข้อมูลผู้ใช้งาน
                     </a>
-                    <div class="dropdown-divider"></div>
+                    {{-- <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#">
                         <i class="fas fa-cog mr-2 text-teal"></i>
                         ตั้งค่า
-                    </a>
+                    </a> --}}
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ route('logout') }}"
                         onclick="event.preventDefault();

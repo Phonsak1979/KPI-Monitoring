@@ -8,7 +8,7 @@
             <div class="col-md-10">
                 <div class="card">
                     <div class="card-header bg-gradient-info">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> แสดงอำเภอ</h3>
+                        <h3 class="card-title"><i class="fas fa-landmark mr-2"></i><b>แสดงอำเภอ</b></h3>
                     </div>
                     <div class="card-body">
                         <div class="form-group">

@@ -11,13 +11,13 @@
 
                 <div class="card">
                     <div class="card-header bg-gradient-success">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> เพิ่มอำเภอ</h3>
+                        <h3 class="card-title"><i class="fas fa-landmark mr-2"></i><b>เพิ่มอำเภอ</b></h3>
                     </div>
                     <form action="{{ route('districts.store') }}" method="POST">
                         @csrf
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="district_code">รหัสอำเภอ</label>
+                                <label for="district_code">รหัสอำเภอ <span class="text-danger">*</span></label>
                                 <input type="text" name="district_code" class="form-control" id="district_code"
                                     placeholder="รหัสอำเภอ 4 หลัก">
                                 @error('district_code')
@@ -25,7 +25,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label for="district_name">ชื่ออำเภอ</label>
+                                <label for="district_name">ชื่ออำเภอ <span class="text-danger">*</span></label>
                                 <input type="text" name="district_name" class="form-control" id="district_name"
                                     placeholder="ชื่ออำเภอ เช่น ดอนมดแดง">
                                 @error('district_name')

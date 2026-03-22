@@ -11,14 +11,14 @@
 
                 <div class="card">
                     <div class="card-header bg-gradient-warning">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> แก้ไขอำเภอ</h3>
+                        <h3 class="card-title"><i class="fas fa-landmark mr-2"></i><b>แก้ไขอำเภอ</b></h3>
                     </div>
                     <form action="{{ route('districts.update', $district->id) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="district_code">รหัสอำเภอ</label>
+                                <label for="district_code">รหัสอำเภอ <span class="text-danger">*</span></label>
                                 <input type="text" name="district_code" class="form-control" id="district_code"
                                     placeholder="รหัสอำเภอ" value="{{ $district->district_code }}">
                                 @error('district_code')
@@ -26,7 +26,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label for="district_name">ชื่ออำเภอ</label>
+                                <label for="district_name">ชื่ออำเภอ <span class="text-danger">*</span></label>
                                 <input type="text" name="district_name" class="form-control" id="district_name"
                                     placeholder="ชื่ออำเภอ" value="{{ $district->district_name }}">
                                 @error('district_name')

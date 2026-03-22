@@ -6,9 +6,9 @@
     <div class="container-fluid p-3">
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <div class="card card-info">
-                    <div class="card-header d-flex">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> แสดงหน่วยบริการ</h3>
+                <div class="card">
+                    <div class="card-header bg-gradient-info">
+                        <h3 class="card-title"><i class="fas fa-hospital-alt mr-2"></i><b>แสดงหน่วยบริการ</b></h3>
                     </div>
                     <div class="card-body">
                         <div class="form-group">

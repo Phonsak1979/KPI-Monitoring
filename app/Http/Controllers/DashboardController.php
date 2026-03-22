@@ -143,19 +143,30 @@ class DashboardController extends Controller
                 // เก็บรายละเอียดรายโรงพยาบาลใส่กลับในตัวชี้วัดนั้นๆ เผื่อเรียกใช้ในจุดอื่น (เช่น แสดงใน Modal แบบละเอียด)
                 $ranking->details = $details;
 
-                // สะสมคะแนนรายโรงพยาบาล
-                foreach ($details as $item) {
-                    $hospcode = $item->hospcode;
-                    if (!isset($hospitalStats[$hospcode])) continue;
+                // สร้าง lookup จาก $details เพื่อค้นหาข้อมูลของแต่ละโรงพยาบาลได้รวดเร็ว
+                $detailsByHospcode = $details->keyBy('hospcode');
 
-                    if ($item->percent >= $ranking->target_value) {
+                // สะสมคะแนนรายโรงพยาบาล โดยลูปทุกโรงพยาบาลเพื่อให้จำนวนตัวชี้วัดที่ประเมินครบถ้วน
+                foreach ($hospitalStats as $hospcode => $stat) {
+                    $item = $detailsByHospcode->get($hospcode);
+
+                    if ($item) {
+                        $percent = $item->percent;
+                        $rank = $item->rank;
+                    } else {
+                        // กรณีที่โรงพยาบาลไม่มีข้อมูลในตารางผลงาน ยึดตามผลงาน 0
+                        $percent = 0;
+                        $rank = $this->calculateDynamicRank(0, $ranking);
+                    }
+
+                    if ($percent >= $ranking->target_value) {
                         $hospitalStats[$hospcode]['passed_kpi']++;
                     } else {
                         $hospitalStats[$hospcode]['failed_kpi']++;
                     }
 
                     $weight = $ranking->weight ?? 0;
-                    $score = ($item->rank / 5) * $weight;
+                    $score = ($rank / 5) * $weight;
 
                     $hospitalStats[$hospcode]['total_weight'] += $weight;
                     $hospitalStats[$hospcode]['total_score'] += $score;

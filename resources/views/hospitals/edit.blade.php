@@ -9,9 +9,9 @@
 
             <div class="col-md-10">
 
-                <div class="card card-warning">
-                    <div class="card-header d-flex">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> แก้ไขหน่วยบริการ</h3>
+                <div class="card">
+                    <div class="card-header bg-gradient-warning">
+                        <h3 class="card-title"><i class="fas fa-hospital-alt mr-2"></i><b>แก้ไขหน่วยบริการ</b></h3>
                     </div>
                     <form action="{{ route('hospitals.update', $hospital->id) }}" method="POST">
                         @csrf

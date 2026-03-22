@@ -11,14 +11,14 @@
 
                 <div class="card">
                     <div class="card-header bg-gradient-warning">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> แก้ไขกลุ่มงาน/ฝ่าย</h3>
+                        <h3 class="card-title"><i class="fas fa-hospital-user mr-2"></i><b>แก้ไขกลุ่มงาน/ฝ่าย</b></h3>
                     </div>
                     <form action="{{ route('departments.update', $department->id) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="department_name">ชื่อกลุ่มงาน/ฝ่าย</label>
+                                <label for="department_name">ชื่อกลุ่มงาน/ฝ่าย <span class="text-danger">*</span></label>
                                 <input type="text" name="department_name" class="form-control" id="department_name"
                                     placeholder="ชื่อกลุ่มงาน/ฝ่าย" value="{{ $department->department_name }}">
                                 @error('department_name')

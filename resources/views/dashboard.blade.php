@@ -29,7 +29,7 @@
                         <div class="row">
                             {{-- small box 1 --}}
                             <div class="col-lg-4 col-md-4 col-sm-12">
-                                <div class="small-box bg-gradient-primary">
+                                <div class="small-box bg-gradient-success">
                                     <div class="inner">
                                         <h3>{{ number_format($totalHospitals) }} <small>หน่วยบริการ</small></h3>
                                         <p>(HCODE)</p>
@@ -43,7 +43,7 @@
                             </div>
                             {{-- small box 2 --}}
                             <div class="col-lg-4 col-md-4 col-sm-12">
-                                <div class="small-box bg-gradient-warning">
+                                <div class="small-box bg-gradient-info">
                                     <div class="inner">
                                         <h3>{{ number_format($totalRankings) }} <small>ตัวชี้วัด</small></h3>
                                         <p>(HDC-KPI)</p>
@@ -75,8 +75,8 @@
                         <div class="row">
                             <div class="col-lg-8">
                                 <div class="card">
-                                    <div class="card-header bg-gradient-success">
-                                        <h3 class="card-title"><i class="fas fa-chart-bar mr-1"></i> ร้อยละผลงาน HDC-KPI ระดับหน่วยบริการ</h3>
+                                    <div class="card-header bg-gradient-primary">
+                                        <h3 class="card-title"><i class="fas fa-chart-bar mr-2"></i><b>ร้อยละผลงาน รายหน่วยบริการ</b> </h3>
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                                 <i class="fas fa-minus"></i>
@@ -95,7 +95,7 @@
                             <div class="col-lg-4">
                                 <div class="card">
                                     <div class="card-header bg-gradient-primary">
-                                        <h3 class="card-title"><i class="fas fa-chart-pie mr-1"></i> รวมทุกหน่วยบริการ</h3>
+                                        <h3 class="card-title"><i class="fas fa-chart-pie mr-2"></i><b>ผลงานรวมทุกหน่วย</b></h3>
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                                 <i class="fas fa-minus"></i>
@@ -117,17 +117,17 @@
 
                                 <div class="card">
                                     <div class="card-header bg-gradient-success">
-                                        <h3 class="card-title"><i class="fas fa-list mr-1"></i> รายงาน HDC-KPI ระดับหน่วยบริการ</h3>
+                                        <h3 class="card-title"><i class="fas fa-list mr-2"></i><b>ร้อยละผลงาน รายหน่วยบริการ</b></h3>
                                     </div>
                                     <div class="card-body p-0">
-                                        <table class="table table-hover">
+                                        <table class="table table-hover table-bordered">
                                             <thead>
                                                 <tr>
                                                     <th class="text-center" style="width: 10%">ลำดับ</th>
                                                     <th class="text-center" style="width: 35%">หน่วยบริการ</th>
-                                                    <th class="text-center" style="width: 15%">KPI ผ่านเกณฑ์</th>
-                                                    <th class="text-center" style="width: 15%">KPI ไม่ผ่านเกณฑ์</th>
-                                                    <th class="text-center" style="width: 10%">คะแนนรวม</th>
+                                                    <th class="text-right" style="width: 15%">ผ่านเกณฑ์ (ข้อ)</th>
+                                                    <th class="text-right" style="width: 15%">ไม่ผ่านเกณฑ์ (ข้อ)</th>
+                                                    <th class="text-right" style="width: 10%">คะแนนรวม</th>
                                                     <th class="text-center" style="width: 10%">ร้อยละ</th>
                                                 </tr>
                                             </thead>
@@ -139,9 +139,9 @@
                                                             <span class="badge badge-info" style="min-width: 60px; display: inline-block;">{{ $hospital['hospcode'] }}</span>
                                                             {{ $hospital['hospital_name'] }}
                                                         </td>
-                                                        <td class="text-center text-bold text-success">{{ number_format($hospital['passed_kpi']) }}</td>
-                                                        <td class="text-center text-bold text-danger">{{ number_format($hospital['failed_kpi']) }}</td>
-                                                        <td class="text-center text-bold">{{ number_format($hospital['total_score'], 2) }}</td>
+                                                        <td class="text-right text-bold text-success">{{ number_format($hospital['passed_kpi']) }}</td>
+                                                        <td class="text-right text-bold text-danger">{{ number_format($hospital['failed_kpi']) }}</td>
+                                                        <td class="text-right text-bold">{{ number_format($hospital['total_score'], 2) }}</td>
                                                         <td class="text-center">
                                                             @if($hospital['percent_score'] >= 80)
                                                                 <span class="badge bg-success" style="min-width: 60px; display: inline-block;">{{ number_format($hospital['percent_score'], 2) }}%</span>
@@ -161,9 +161,9 @@
                                             <tfoot class="bg-light font-weight-bold">
                                                 <tr style="font-size: 1.25rem;">
                                                     <td colspan="2" class="text-center" style="border-bottom-left-radius: 10px;">รวมทุกหน่วยบริการ</td>
-                                                    <td class="text-center text-success">{{ number_format($passedRankings) }}</td>
-                                                    <td class="text-center text-danger">{{ number_format($failedRankings) }}</td>
-                                                    <td class="text-center text-dark">{{ number_format($totalScore, 2) }}</td>
+                                                    <td class="text-right text-success">{{ number_format($passedRankings) }}</td>
+                                                    <td class="text-right text-danger">{{ number_format($failedRankings) }}</td>
+                                                    <td class="text-right text-dark">{{ number_format($totalScore, 2) }}</td>
                                                     <td class="text-center" style="border-bottom-right-radius: 10px;">
                                                         @if($percentScore >= 80)
                                                             <span class="badge bg-success" style="min-width: 60px; display: inline-block;">{{ number_format($percentScore, 2) }}%</span>

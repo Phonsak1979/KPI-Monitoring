@@ -9,16 +9,16 @@
 
             <div class="col-md-10">
 
-                <div class="card card-success">
-                    <div class="card-header d-flex">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> เพิ่มตัวชี้วัด</h3>
+                <div class="card">
+                    <div class="card-header bg-gradient-success">
+                        <h3 class="card-title"><i class="fas fa-th-list mr-2"></i><b>เพิ่มตัวชี้วัด</b></h3>
                     </div>
 
                     <form action="{{ route('rankings.store') }}" method="POST">
                         @csrf
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="ranking_code">รหัสตัวชี้วัด</label>
+                                <label for="ranking_code">รหัสตัวชี้วัด <span class="text-danger">*</span></label>
                                 <input type="text" name="ranking_code" class="form-control" id="ranking_code"
                                     placeholder="Ranking Code">
                                 @error('ranking_code')
@@ -26,7 +26,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label for="ranking_name">ชื่อตัวชี้วัด</label>
+                                <label for="ranking_name">ชื่อตัวชี้วัด <span class="text-danger">*</span></label>
                                 <input type="text" name="ranking_name" class="form-control" id="ranking_name"
                                     placeholder="Ranking Name">
                                 @error('ranking_name')
@@ -34,7 +34,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label for="department_id">กลุ่มงาน/ฝ่าย</label>
+                                <label for="department_id">กลุ่มงาน/ฝ่าย <span class="text-danger">*</span></label>
                                 <select name="department_id" id="department_id" class="custom-select">
                                     <option value="">--เลือกกลุ่มงาน/ฝ่าย--</option>
                                     @foreach ($departments as $department)
@@ -46,7 +46,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label for="table_name">ชื่อตาราง</label>
+                                <label for="table_name">ชื่อตาราง <span class="text-danger">*</span></label>
                                 <input type="text" name="table_name" class="form-control" id="table_name"
                                     placeholder="Table Name">
                                 @error('table_name')
@@ -54,7 +54,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label for="hdc_link">HDC Link</label>
+                                <label for="hdc_link">HDC Link <span class="text-danger">*</span></label>
                                 <input type="text" name="hdc_link" class="form-control" id="hdc_link"
                                     placeholder="ใส่ URL : Link ไปที่หน้ารายงาน KPI ของ HDC">
                                 @error('hdc_link')
@@ -63,7 +63,7 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="target_value">ค่าเป้าหมาย (ร้อยละ)</label>
+                                    <label for="target_value">ค่าเป้าหมาย (ร้อยละ) <span class="text-danger">*</span></label>
                                     <input type="number" step="1.0" name="target_value" class="form-control"
                                         id="target_value" placeholder="00">
                                     @error('target_value')
@@ -71,7 +71,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="weight">น้ำหนักคะแนน (Weight)</label>
+                                    <label for="weight">น้ำหนักคะแนน (Weight) <span class="text-danger">*</span></label>
                                     <input type="number" step="0.1" name="weight" class="form-control" id="weight"
                                         placeholder="00">
                                     @error('weight')
@@ -81,7 +81,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label>เกณฑ์ Rank คะแนน (5-0)</label>
+                                <label>เกณฑ์ Rank คะแนน (5-0) <span class="text-danger">*</span></label>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <!-- Score 5 -->

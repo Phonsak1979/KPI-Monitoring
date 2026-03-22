@@ -27,9 +27,9 @@
 
                         <!-- ตัวกรองหน่วยบริการ -->
                         <div class="card">
-                            <div class="card-header bg-gradient-success">
+                            <div class="card-header bg-gradient-primary">
                                 <h3 class="card-title text-white">
-                                    <i class="fas fa-filter mr-2"></i>ข้อมูลรายหน่วยบริการ
+                                    <i class="fas fa-filter mr-2"></i><b>กรองข้อมูลรายหน่วยบริการ</b>
                                 </h3>
                             </div>
                             <div class="card-body">
@@ -147,12 +147,12 @@
                                 <div class="card">
                                     <div class="card-header bg-gradient-success">
                                         <h3 class="card-title">
-                                            <i class="fas fa-list mr-1"></i> รายงานผลการดำเนินงาน
+                                            <i class="fas fa-tasks mr-2"></i><b>รายงานผลการดำเนินงาน</b>
                                             @if ($selectedHospcode)
-                                                <span class="badge badge-light text-dark ml-2">หน่วยบริการ : 
+                                                <span class="badge badge-warning ml-2">หน่วยบริการ : 
                                                     {{ $selectedHospcode }}</span>
                                             @else
-                                                <span class="badge badge-light text-dark ml-2">ภาพรวมทั้งหมด</span>
+                                                <span class="badge badge-warning ml-2">รวมทุกหน่วยบริการ</span>
                                             @endif
                                             
                                             @if (($filterStatus ?? 'all') === 'passed')
@@ -164,16 +164,16 @@
                                     </div>
                                     <div class="card-body p-0">
                                         <div class="table-responsive">
-                                            <table class="table table-hover mb-0">
+                                            <table class="table table-bordered table-hover mb-0">
                                                 <thead>
                                                     <tr>
-                                                        <th class="text-center" style="width: 5%">ลำดับ</th>
-                                                        <th class="text-center" style="width: 55%">ชื่อตัวชี้วัด</th>
-                                                        <th class="text-right" style="width: 10%">เป้าหมาย</th>
-                                                        <th class="text-right" style="width: 10%">ผลงาน</th>
-                                                        <th class="text-center" style="width: 10%">ร้อยละ</th>
-                                                        <th class="text-center" style="width: 7%">Rank</th>
-                                                        <th class="text-center" style="width: 3%"><i
+                                                        <th class="text-center" style="width: 7%">ลำดับ</th>
+                                                        <th class="text-center" style="width: 58%">ชื่อตัวชี้วัด</th>
+                                                        <th class="text-right" style="width: 8%">เป้าหมาย</th>
+                                                        <th class="text-right" style="width: 8%">ผลงาน</th>
+                                                        <th class="text-center" style="width: 8%">ร้อยละ</th>
+                                                        <th class="text-center" style="width: 5%">Rank</th>
+                                                        <th class="text-center" style="width: 4%"><i
                                                                 class="fas fa-search-plus"></i></th>
                                                     </tr>
                                                 </thead>
@@ -271,16 +271,15 @@
                                     </div>
                                     <div class="modal-body p-0">
                                         <div class="table-responsive">
-                                            <table class="table table-hover mb-0">
+                                            <table class="table table-hover table-striped table-bordered mb-0">
                                                 <thead>
                                                     <tr>
-                                                        <th class="text-center" style="width: 8%">ลำดับ</th>
-                                                        <th class="text-center" style="width: 33%">หน่วยบริการ</th>
-                                                        <th class="text-right" style="width: 12%">เป้าหมาย</th>
-                                                        <th class="text-right" style="width: 12%">ผลงาน</th>
-                                                        <th class="text-center" style="width: 2%"></th>
-                                                        <th class="text-center" style="width: 23%">ร้อยละ (%)</th>
-                                                        <th class="text-center" style="width: 10%">Rank</th>
+                                                        <th class="text-center" style="width: 5%">ลำดับ</th>
+                                                        <th class="text-center" style="width: 40%">หน่วยบริการ</th>
+                                                        <th class="text-right" style="width: 10%">เป้าหมาย</th>
+                                                        <th class="text-right" style="width: 10%">ผลงาน</th>
+                                                        <th class="text-center" style="width: 30%">ร้อยละ (%)</th>
+                                                        <th class="text-center" style="width: 5%">Rank</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -295,7 +294,6 @@
                                                             </td>
                                                             <td class="text-right">{{ number_format($detail->result) }}
                                                             </td>
-                                                            <td></td>
                                                             <td class="text-center">
                                                                 @php
                                                                     $detailPercent = $detail->percent;
@@ -328,14 +326,20 @@
                                                 <tfoot class="bg-light font-weight-bold">
                                                     <tr style="font-size: 1.15rem;">
                                                         <td colspan="2" class="text-center "
-                                                            style="border-bottom-left-radius: 10px;">รวมทั้งหมด</td>
+                                                            style="border-bottom-left-radius: 10px;">รวมทุกหน่วยบริการ</td>
                                                         <td class="text-right text-dark">
                                                             {{ number_format($ranking->total_target) }}</td>
                                                         <td class="text-right text-dark">
                                                             {{ number_format($ranking->total_result) }}</td>
-                                                        <td></td>
-                                                        <td class="text-center text-primary">
-                                                            {{ number_format($ranking->percent, 2) }}%</td>
+                                                        <td class="text-center">
+                                                            @if ($ranking->percent >= $ranking->target_value)
+                                                                <span
+                                                                    class="text-success">{{ number_format($ranking->percent, 2) }}%</span>
+                                                            @else
+                                                                <span
+                                                                    class="text-danger">{{ number_format($ranking->percent, 2) }}%</span>
+                                                            @endif
+                                                        </td>
                                                         <td class="text-center" style="border-bottom-right-radius: 10px;">
                                                             <span class="badge bg-primary"
                                                                 style="min-width: 50px; display: inline-block;">{{ $ranking->rank }}</span>

@@ -14,10 +14,17 @@
         <!-- User panel -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
             <!-- User Image -->
-            <div class="image">
-                <img src="{{ asset('dist/img/Phonsak.jpg') }}" class="img-circle elevation-2" alt="User Image"
-                    style="width: 45px; height: 45px; object-fit: cover; border: 1px solid #ced4da; padding: 1px; background-color: #fff;">
-            </div>
+            @if (Auth::user()->id == 1)
+                <div class="image">
+                    <img src="{{ asset('dist/img/Phonsak.jpg') }}" class="img-circle elevation-2" alt="User Image"
+                        style="width: 45px; height: 45px; object-fit: cover; border: 1px solid #ced4da; padding: 1px; background-color: #fff;">
+                </div>
+            @else
+                <div class="image">
+                    <img src="{{ asset('dist/img/user.png') }}" class="img-circle elevation-2" alt="User Image"
+                        style="width: 45px; height: 45px; object-fit: contain; border: 1px solid #ced4da; padding: 1px; background-color: #fff;">
+                </div>
+            @endif
             <!-- User Info -->
             <div class="info">
                 <a href="#" class="d-block">{{ Auth::user()?->name }}</a>
@@ -59,7 +66,7 @@
                 <li class="nav-item">
                     <a href="{{ route('districts.index') }}"
                         class="nav-link {{ request()->is('districts') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-cog"></i>
+                        <i class="nav-icon fas fa-landmark"></i>
                         <p>
                             อำเภอ
                         </p>
@@ -70,7 +77,7 @@
                 <li class="nav-item">
                     <a href="{{ route('hospitals.index') }}"
                         class="nav-link {{ request()->is('hospitals') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-cog"></i>
+                        <i class="nav-icon fas fa-hospital-alt"></i>
                         <p>
                             หน่วยบริการ
                         </p>
@@ -81,18 +88,31 @@
                 <li class="nav-item">
                     <a href="{{ route('departments.index') }}"
                         class="nav-link {{ request()->is('departments') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-cog"></i>
+                        <i class="nav-icon fas fa-hospital-user"></i>
                         <p>
                             กลุ่มงาน/ฝ่าย
                         </p>
                     </a>
                 </li>
 
+                @if (Auth::user()->role !== 'user')
+                <!-- Navbar Item -->
+                <li class="nav-item">
+                    <a href="{{ route('users.index') }}"
+                        class="nav-link {{ request()->is('users*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-user-cog"></i>
+                        <p>
+                            ผู้ใช้งาน
+                        </p>
+                    </a>
+                </li>
+                @endif
+
                 <!-- Navbar Item -->
                 <li class="nav-item">
                     <a href="{{ route('rankings.index') }}"
                         class="nav-link {{ request()->is('rankings') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-cog"></i>
+                        <i class="nav-icon fas fa-th-list"></i>
                         <p>
                             ตัวชี้วัด
                         </p>

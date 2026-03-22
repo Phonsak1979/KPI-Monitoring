@@ -10,7 +10,7 @@ use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\HospitalController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\SyncController;
-
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,11 +30,16 @@ Route::get('/report', [ReportController::class, 'index'])->name('report.index')-
 
 // Resource routes (ทุก role เข้าถึง index/show ได้, admin middleware ตรวจสอบใน Controller)
 Route::middleware('auth')->group(function () {
+    Route::get('user/detail', [UserController::class, 'profileEdit'])->name('user.detail');
+    Route::put('user/detail', [UserController::class, 'profileUpdate'])->name('user.detail.update');
     Route::resource('departments', DepartmentController::class);
     Route::resource('districts', DistrictController::class);
     Route::resource('hospitals', HospitalController::class);
     Route::resource('rankings', RankingController::class);
+    Route::post('users/changeStatus', [UserController::class, 'changeStatus'])->name('users.changeStatus');
+    Route::resource('users', UserController::class);
 });
+
 
 // Sync routes (admin only)
 Route::middleware(['auth', 'admin'])->group(function () {

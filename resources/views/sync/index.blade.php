@@ -11,7 +11,7 @@
 
                 <div class="card">
                     <div class="card-header bg-gradient-success">
-                        <h3 class="card-title mb-0"><i class="fas fa-server mr-1"></i> Sync MOPH Open-Data</h3>
+                        <h3 class="card-title mb-0"><i class="fas fa-server mr-2"></i><b>Sync MOPH Open-Data</b></h3>
                     </div>
                     <div class="card-body">
 
