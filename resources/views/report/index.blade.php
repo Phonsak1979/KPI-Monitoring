@@ -178,57 +178,55 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    @php $currentDept = null; @endphp
                                                     @forelse ($rankings as $index => $ranking)
                                                         @php
+                                                            $deptName = $ranking->department->department_name ?? 'ไม่มีกลุ่มงาน';
                                                             $percent = $ranking->percent;
-                                                            $badgeClass =
-                                                                $percent >= $ranking->target_value
-                                                                    ? 'bg-success'
-                                                                    : 'bg-danger';
+                                                            $badgeClass = $percent >= $ranking->target_value ? 'bg-success' : 'bg-danger';
                                                         @endphp
+
+                                                        @if ($currentDept !== $deptName)
+                                                            <tr class="table-info" style="border-top: 3px solid #20c997; border-bottom: 1px solid #dee2e6;">
+                                                                <td colspan="7">
+                                                                    <h6 class="mb-0 font-weight-bold">
+                                                                        <i class="fas fa-hospital-user mr-2 ml-2"></i>กลุ่มงาน : {{ $deptName }}
+                                                                    </h6>
+                                                                </td>
+                                                            </tr>
+                                                            @php $currentDept = $deptName; @endphp
+                                                        @endif
+
                                                         <tr>
-                                                            <td class="text-center">{{ $rankings->firstItem() + $index }}
-                                                            </td>
+                                                            <td class="text-center">{{ $rankings->firstItem() + $index }}</td>
                                                             <td>
                                                                 <div>
-                                                                    <span class="badge bg-info"
-                                                                        style="min-width: 50px; display: inline-block;">R{{ $ranking->ranking_code }}</span>
+                                                                    <span class="badge bg-info" style="min-width: 50px; display: inline-block;">R{{ $ranking->ranking_code }}</span>
                                                                     {{ $ranking->ranking_name }}
-                                                                    <span class="badge bg-indigo"
-                                                                        style="min-width: 30px; display: inline-block;">{{ $ranking->weight }}</span>
-                                                                    <span class="badge bg-warning"
-                                                                        style="min-width: 30px; display: inline-block;">{{ $ranking->score_total }}</span>
-                                                                    <a href="{{ $ranking->hdc_link }}" target="_blank"
-                                                                        class="badge badge-primary"
-                                                                        style="min-width: 30px; display: inline-block;"
-                                                                        title="HDC Link">
+                                                                    <span class="badge bg-indigo" style="min-width: 30px; display: inline-block;">{{ $ranking->weight }}</span>
+                                                                    <span class="badge bg-warning" style="min-width: 30px; display: inline-block;">{{ $ranking->score_total }}</span>
+                                                                    <a href="{{ $ranking->hdc_link }}" target="_blank" class="badge badge-primary" style="min-width: 30px; display: inline-block;" title="HDC Link">
                                                                         <i class="fas fa-link"></i>
                                                                     </a>
                                                                 </div>
                                                             </td>
-                                                            <td class="text-right text-bold ">
-                                                                {{ number_format($ranking->total_target) }}
-                                                            </td>
-                                                            <td class="text-right text-bold">
-                                                                {{ number_format($ranking->total_result) }}
+                                                            <td class="text-right text-bold">{{ number_format($ranking->total_target) }}</td>
+                                                            <td class="text-right text-bold">{{ number_format($ranking->total_result) }}</td>
+                                                            <td class="text-center">
+                                                                <span class="badge {{ $badgeClass }}" style="min-width: 50px; display: inline-block;">{{ number_format($percent, 2) }}%</span>
                                                             </td>
                                                             <td class="text-center">
-                                                                <span class="badge {{ $badgeClass }}"
-                                                                    style="min-width: 50px; display: inline-block;">{{ number_format($percent, 2) }}%</span>
+                                                                <span class="badge bg-primary" style="min-width: 50px; display: inline-block;">{{ $ranking->rank }}</span>
                                                             </td>
                                                             <td class="text-center">
-                                                                <span class="badge bg-primary"
-                                                                    style="min-width: 50px; display: inline-block;">{{ $ranking->rank }}</span>
-                                                            </td>
-                                                            <td class="text-center"><a href="#" data-toggle="modal"
-                                                                    data-target="#modal-kpi-{{ $ranking->id }}"><i
-                                                                        class="fas fa-search-plus text-primary"></i></a>
+                                                                <a href="#" data-toggle="modal" data-target="#modal-kpi-{{ $ranking->id }}">
+                                                                    <i class="fas fa-search-plus text-primary"></i>
+                                                                </a>
                                                             </td>
                                                         </tr>
                                                     @empty
                                                         <tr>
-                                                            <td colspan="7" class="text-center text-muted py-4">
-                                                                ไม่พบข้อมูลตัวชี้วัด</td>
+                                                            <td colspan="7" class="text-center text-muted py-4">ไม่พบข้อมูลตัวชี้วัด</td>
                                                         </tr>
                                                     @endforelse
                                                 </tbody>

@@ -7,14 +7,23 @@
                 <i class="fas fa-bars fa-2x"></i>
             </a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="{{ url('/home') }}" class="nav-link"><i class="fas fa-home text-teal mr-1"></i> หน้าแรก</a>
+        <li class="nav-item">
+            <a href="{{ url('/home') }}" class="nav-link">
+                <i class="fas fa-home text-teal"></i>
+                <span class="d-none d-md-inline ml-1">หน้าแรก</span>
+            </a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="{{ url('/about') }}" class="nav-link"><i class="fas fa-layer-group text-teal mr-1"></i> เกี่ยวกับ</a>
+        <li class="nav-item">
+            <a href="{{ url('/about') }}" class="nav-link">
+                <i class="fas fa-layer-group text-teal"></i>
+                <span class="d-none d-md-inline ml-1">เกี่ยวกับ</span>
+            </a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="{{ url('/contact') }}" class="nav-link"><i class="fas fa-envelope text-teal mr-1"></i> ติดต่อเรา</a>
+        <li class="nav-item">
+            <a href="{{ url('/contact') }}" class="nav-link">
+                <i class="fas fa-envelope text-teal"></i>
+                <span class="d-none d-md-inline ml-1">ติดต่อเรา</span>
+            </a>
         </li>
     </ul>
 

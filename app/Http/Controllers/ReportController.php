@@ -16,8 +16,11 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. นำเข้าข้อมูลพื้นฐาน
-        $rankings = Ranking::all()->sortBy('ranking_code', SORT_NATURAL)->values();
+        // 1. นำเข้าข้อมูลพื้นฐาน พร้อมโหลดข้อมูลกลุ่มงาน (Eager Load) และเรียงลำดับตาม department_id
+        $rankings = Ranking::with('department')->get()
+            ->sortBy('ranking_code', SORT_NATURAL)
+            ->sortBy('department_id')
+            ->values();
         
         // ข้อมูลหน่วยบริการ (เพื่อไปแสดงใน Dropdown) เรียงตาม รหัส รพ.
         $hospitalsList = Hospital::orderBy('hospital_code')->get();
