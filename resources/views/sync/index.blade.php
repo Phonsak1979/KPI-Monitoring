@@ -15,10 +15,13 @@
                     </div>
                     <div class="card-body">
 
-                        <!-- ปุ่ม Sync ข้อมูลทั้งหมด -->
-                        <div class="mb-3">
-                            <button type="button" class="btn btn-outline-success btn-sync-all text-bold">
+                        <!-- ปุ่ม Sync ข้อมูลทั้งหมด + ตั้งเวลา -->
+                        <div class="mb-3 d-flex align-items-center">
+                            <button type="button" class="btn btn-outline-success btn-sync-all text-bold mr-2">
                                 <i class="fas fa-sync-alt mr-1"></i> Sync Data ทุกข้อ
+                            </button>
+                            <button type="button" class="btn btn-outline-info text-bold" data-toggle="modal" data-target="#syncScheduleModal">
+                                <i class="fas fa-clock mr-1"></i> ตั้งเวลา Sync อัตโนมัติ
                             </button>
                         </div>
 
@@ -136,6 +139,85 @@
             </div>
         </div>
     </div>
+
+    <!-- ==========================================
+         Modal: ตั้งเวลา Sync อัตโนมัติ
+         ========================================== -->
+    <div class="modal fade" id="syncScheduleModal" tabindex="-1" role="dialog" aria-labelledby="syncScheduleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-info">
+                    <h5 class="modal-title" id="syncScheduleModalLabel">
+                        <i class="fas fa-clock mr-2"></i><b>ตั้งเวลา Sync อัตโนมัติ</b>
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- ฟอร์มเพิ่มเวลา -->
+                    <div class="card card-outline card-info mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-end">
+                                <div class="col-md-6">
+                                    <label for="inputSyncTime" class="font-weight-bold">
+                                        <i class="fas fa-plus-circle text-info mr-1"></i> เพิ่มเวลา Sync ใหม่
+                                    </label>
+                                    <input type="time" class="form-control" id="inputSyncTime" required>
+                                </div>
+                                <div class="col-md-6 mt-2 mt-md-0">
+                                    <button type="button" class="btn btn-info text-bold" id="btnSaveSchedule">
+                                        <i class="fas fa-save mr-1"></i> บันทึกเวลา
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ตารางรายการเวลา -->
+                    <div class="card card-outline card-secondary">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-list mr-1"></i> รายการเวลาที่ตั้งไว้</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-hover mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th class="text-center" style="width: 10%">ลำดับ</th>
+                                        <th class="text-center" style="width: 25%">เวลา</th>
+                                        <th class="text-center" style="width: 20%">สถานะ</th>
+                                        <th class="text-center" style="width: 25%">รันล่าสุด</th>
+                                        <th class="text-center" style="width: 20%">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scheduleTableBody">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="fas fa-spinner fa-spin mr-1"></i> กำลังโหลด...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning mb-0">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        <strong>หมายเหตุ:</strong> ระบบจะ Sync ข้อมูลทุกตัวชี้วัดอัตโนมัติตามเวลาที่ตั้งไว้ในแต่ละวัน
+                        <br><small>** ต้องตั้ง Cron Job / Task Scheduler บน Server เพื่อให้ระบบทำงานอัตโนมัติ **</small>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i> ปิด
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('JS')
@@ -346,6 +428,225 @@
                         }
                     });
                     form.submit();
+                }
+            });
+        });
+
+        // ==========================================
+        // ลอจิกสำหรับ Modal ตั้งเวลา Sync อัตโนมัติ
+        // ==========================================
+
+        // โหลดรายการ Schedule เมื่อเปิด Modal
+        $('#syncScheduleModal').on('shown.bs.modal', function() {
+            loadSchedules();
+        });
+
+        // ฟังก์ชันโหลดรายการ Schedule
+        function loadSchedules() {
+            $.ajax({
+                url: '{{ route('sync.schedules') }}',
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        renderScheduleTable(response.data);
+                    }
+                },
+                error: function() {
+                    $('#scheduleTableBody').html(
+                        '<tr><td colspan="5" class="text-center text-danger py-3">' +
+                        '<i class="fas fa-exclamation-triangle mr-1"></i> ไม่สามารถโหลดข้อมูลได้</td></tr>'
+                    );
+                }
+            });
+        }
+
+        // ฟังก์ชันแสดงตารางข้อมูล Schedule
+        function renderScheduleTable(data) {
+            var tbody = $('#scheduleTableBody');
+            tbody.empty();
+
+            if (data.length === 0) {
+                tbody.html(
+                    '<tr><td colspan="5" class="text-center text-muted py-4">' +
+                    '<i class="fas fa-calendar-times mr-1"></i> ยังไม่มีเวลาที่ตั้งไว้</td></tr>'
+                );
+                return;
+            }
+
+            $.each(data, function(index, schedule) {
+                var statusBadge = schedule.is_active
+                    ? '<span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i>เปิดใช้งาน</span>'
+                    : '<span class="badge badge-secondary"><i class="fas fa-pause-circle mr-1"></i>ปิดใช้งาน</span>';
+
+                var toggleBtnClass = schedule.is_active ? 'btn-outline-warning' : 'btn-outline-success';
+                var toggleBtnIcon = schedule.is_active ? 'fa-pause' : 'fa-play';
+                var toggleBtnTitle = schedule.is_active ? 'ปิดใช้งาน' : 'เปิดใช้งาน';
+
+                var lastRun = schedule.last_run_at
+                    ? new Date(schedule.last_run_at).toLocaleString('th-TH', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })
+                    : '<span class="text-muted">ยังไม่เคยรัน</span>';
+
+                // ปุ่มดูผลลัพธ์ (เฉพาะเมื่อมี last_run_result)
+                var resultBtn = '';
+                if (schedule.last_run_result) {
+                    resultBtn = '  <button class="btn btn-outline-info btn-sm mr-1 btn-view-result" data-result=\'' + JSON.stringify(schedule.last_run_result) + '\' data-time="' + schedule.sync_time + '" title="ดูผลลัพธ์">' +
+                        '    <i class="fas fa-list-alt"></i>' +
+                        '  </button>';
+                }
+
+                var row = '<tr>' +
+                    '<td class="text-center align-middle">' + (index + 1) + '</td>' +
+                    '<td class="text-center align-middle"><span class="font-weight-bold" style="font-size: 1.2em;"><i class="far fa-clock mr-1 text-info"></i>' + schedule.sync_time + ' น.</span></td>' +
+                    '<td class="text-center align-middle">' + statusBadge + '</td>' +
+                    '<td class="text-center align-middle">' + lastRun + '</td>' +
+                    '<td class="text-center align-middle">' +
+                    resultBtn +
+                    '  <button class="btn ' + toggleBtnClass + ' btn-sm mr-1 btn-toggle-schedule" data-id="' + schedule.id + '" title="' + toggleBtnTitle + '">' +
+                    '    <i class="fas ' + toggleBtnIcon + '"></i>' +
+                    '  </button>' +
+                    '  <button class="btn btn-outline-danger btn-sm btn-delete-schedule" data-id="' + schedule.id + '" data-time="' + schedule.sync_time + '" title="ลบ">' +
+                    '    <i class="fas fa-trash-alt"></i>' +
+                    '  </button>' +
+                    '</td>' +
+                    '</tr>';
+
+                tbody.append(row);
+            });
+        }
+
+        // ปุ่มบันทึกเวลา Sync ใหม่
+        $('#btnSaveSchedule').click(function() {
+            var syncTime = $('#inputSyncTime').val();
+
+            if (!syncTime) {
+                Swal.fire('แจ้งเตือน', 'กรุณาเลือกเวลาที่ต้องการ Sync', 'warning');
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route('sync.schedules.save') }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    sync_time: syncTime
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Toast.fire({ icon: 'success', title: response.message });
+                        $('#inputSyncTime').val('');
+                        loadSchedules();
+                    }
+                },
+                error: function(xhr) {
+                    var msg = xhr.responseJSON && xhr.responseJSON.message
+                        ? xhr.responseJSON.message
+                        : 'เกิดข้อผิดพลาดในการบันทึก';
+                    Swal.fire('ข้อผิดพลาด', msg, 'error');
+                }
+            });
+        });
+
+        // ปุ่มดูผลลัพธ์ Sync
+        $(document).on('click', '.btn-view-result', function() {
+            var result = $(this).data('result');
+            var time = $(this).data('time');
+
+            if (!result || !result.details) {
+                Swal.fire('ไม่มีข้อมูล', 'ยังไม่มีผลลัพธ์การ Sync', 'info');
+                return;
+            }
+
+            var summaryHtml = '<div class="text-left mb-3">' +
+                '<div class="mb-2"><b>เวลาที่รัน:</b> ' + (result.started_at || '-') + '</div>' +
+                '<div class="mb-2">' +
+                '  <span class="badge badge-success p-2 mr-1"><i class="fas fa-check mr-1"></i>สำเร็จ ' + result.success_count + '</span>' +
+                '  <span class="badge badge-danger p-2"><i class="fas fa-times mr-1"></i>ล้มเหลว ' + result.fail_count + '</span>' +
+                '  <span class="badge badge-primary p-2 ml-1"><i class="fas fa-list mr-1"></i>ทั้งหมด ' + result.total + '</span>' +
+                '</div></div>';
+
+            var tableHtml = '<div style="max-height: 350px; overflow-y: auto;">' +
+                '<table class="table table-sm table-bordered text-left" style="font-size: 0.85em;">' +
+                '<thead class="thead-light"><tr>' +
+                '<th class="text-center" style="width:15%">รหัส</th>' +
+                '<th style="width:55%">ชื่อตัวชี้วัด</th>' +
+                '<th class="text-center" style="width:15%">สถานะ</th>' +
+                '<th class="text-center" style="width:15%">หมายเหตุ</th>' +
+                '</tr></thead><tbody>';
+
+            result.details.forEach(function(item) {
+                var badge = item.status === 'success'
+                    ? '<span class="badge badge-success"><i class="fas fa-check"></i></span>'
+                    : '<span class="badge badge-danger"><i class="fas fa-times"></i></span>';
+                var reasonColor = item.status === 'success' ? 'text-success' : 'text-danger';
+                tableHtml += '<tr>' +
+                    '<td class="text-center"><span class="badge bg-teal">R' + item.ranking_code + '</span></td>' +
+                    '<td>' + (item.ranking_name || '-') + '</td>' +
+                    '<td class="text-center">' + badge + '</td>' +
+                    '<td class="text-center ' + reasonColor + '" style="font-size:0.85em">' + item.reason + '</td>' +
+                    '</tr>';
+            });
+
+            tableHtml += '</tbody></table></div>';
+
+            Swal.fire({
+                title: '<i class="fas fa-clipboard-list mr-2"></i>ผลลัพธ์ Sync เวลา ' + time + ' น.',
+                html: summaryHtml + tableHtml,
+                width: '750px',
+                confirmButtonColor: '#17a2b8',
+                confirmButtonText: '<i class="fas fa-check"></i> ปิด'
+            });
+        });
+
+        // ปุ่ม Toggle เปิด/ปิด Schedule
+        $(document).on('click', '.btn-toggle-schedule', function() {
+            var id = $(this).data('id');
+
+            $.ajax({
+                url: '/sync/schedules/' + id + '/toggle',
+                type: 'PATCH',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    if (response.success) {
+                        Toast.fire({ icon: 'success', title: response.message });
+                        loadSchedules();
+                    }
+                },
+                error: function() {
+                    Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเปลี่ยนสถานะได้', 'error');
+                }
+            });
+        });
+
+        // ปุ่มลบ Schedule
+        $(document).on('click', '.btn-delete-schedule', function() {
+            var id = $(this).data('id');
+            var time = $(this).data('time');
+
+            Swal.fire({
+                title: 'ยืนยันการลบ?',
+                html: 'ต้องการลบเวลา Sync <b class="text-danger">' + time + ' น.</b> ใช่หรือไม่?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-trash-alt"></i> ลบ',
+                cancelButtonText: '<i class="fas fa-times"></i> ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/sync/schedules/' + id,
+                        type: 'DELETE',
+                        data: { _token: '{{ csrf_token() }}' },
+                        success: function(response) {
+                            if (response.success) {
+                                Toast.fire({ icon: 'success', title: response.message });
+                                loadSchedules();
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('ข้อผิดพลาด', 'ไม่สามารถลบข้อมูลได้', 'error');
+                        }
+                    });
                 }
             });
         });

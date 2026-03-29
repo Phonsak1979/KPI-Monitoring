@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // รัน sync:auto ทุกนาที (ตัว command จะตรวจสอบเวลาที่ตั้งไว้เอง)
+        $schedule->command('sync:auto')->everyMinute()->withoutOverlapping();
     }
 
     /**

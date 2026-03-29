@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ranking;
+use App\Models\SyncSchedule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
@@ -115,6 +116,82 @@ class SyncController extends Controller
         }
 
         return back()->with('error', "เกิดข้อผิดพลาดในการ Sync ข้อมูลทั้งหมด ({$failCount} ตัวชี้วัด)");
+    }
+
+    // ==========================================
+    // Sync Schedule (ตั้งเวลา Sync อัตโนมัติ)
+    // ==========================================
+
+    /**
+     * ดึงรายการเวลา Sync ทั้งหมด
+     */
+    public function getSchedules()
+    {
+        $schedules = SyncSchedule::orderBy('sync_time')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $schedules
+        ]);
+    }
+
+    /**
+     * บันทึกเวลา Sync ใหม่
+     */
+    public function saveSchedule(Request $request)
+    {
+        $request->validate([
+            'sync_time' => 'required|date_format:H:i',
+        ]);
+
+        // ตรวจสอบว่ามีเวลานี้อยู่แล้วหรือไม่
+        $exists = SyncSchedule::where('sync_time', $request->sync_time)->exists();
+        if ($exists) {
+            return response()->json([
+                'success' => false,
+                'message' => 'เวลา ' . $request->sync_time . ' ถูกตั้งค่าไว้แล้ว'
+            ], 422);
+        }
+
+        $schedule = SyncSchedule::create([
+            'sync_time' => $request->sync_time,
+            'is_active' => true,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'บันทึกเวลา Sync สำเร็จ',
+            'data' => $schedule
+        ]);
+    }
+
+    /**
+     * ลบเวลา Sync
+     */
+    public function deleteSchedule($id)
+    {
+        $schedule = SyncSchedule::findOrFail($id);
+        $schedule->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'ลบเวลา Sync สำเร็จ'
+        ]);
+    }
+
+    /**
+     * เปิด/ปิด สถานะ Schedule
+     */
+    public function toggleSchedule($id)
+    {
+        $schedule = SyncSchedule::findOrFail($id);
+        $schedule->update(['is_active' => !$schedule->is_active]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $schedule->is_active ? 'เปิดใช้งานเวลา Sync แล้ว' : 'ปิดใช้งานเวลา Sync แล้ว',
+            'data' => $schedule
+        ]);
     }
 
     /**

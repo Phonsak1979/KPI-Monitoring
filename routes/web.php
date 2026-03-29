@@ -46,6 +46,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/sync', [SyncController::class, 'index'])->name('sync.index');
     Route::get('/sync/list', [SyncController::class, 'getSyncList'])->name('sync.list');
     Route::post('/sync/all', [SyncController::class, 'syncAll'])->name('sync.all');
+
+    // Sync Schedule (ตั้งเวลา Sync อัตโนมัติ) — ต้องอยู่ก่อน {ranking} เพื่อป้องกัน route conflict
+    Route::get('/sync/schedules', [SyncController::class, 'getSchedules'])->name('sync.schedules');
+    Route::post('/sync/schedules', [SyncController::class, 'saveSchedule'])->name('sync.schedules.save');
+    Route::delete('/sync/schedules/{id}', [SyncController::class, 'deleteSchedule'])->name('sync.schedules.delete');
+    Route::patch('/sync/schedules/{id}/toggle', [SyncController::class, 'toggleSchedule'])->name('sync.schedules.toggle');
+
     Route::post('/sync/{ranking}', [SyncController::class, 'sync'])->name('sync.update');
 });
 
