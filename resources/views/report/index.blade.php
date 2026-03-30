@@ -187,11 +187,11 @@
                                                         @endphp
 
                                                         @if ($currentDept !== $deptName)
-                                                            <tr class="table-info" style="border-top: 3px solid #20c997; border-bottom: 1px solid #dee2e6;">
-                                                                <td colspan="7">
-                                                                    <h6 class="mb-0 font-weight-bold">
-                                                                        <i class="fas fa-hospital-user mr-2 ml-2"></i>กลุ่มงาน : {{ $deptName }}
-                                                                    </h6>
+                                                            <tr style="border-top: 3px solid #20c997; border-bottom: 1px solid #dee2e6;">
+                                                                <td colspan="7" class="py-3">
+                                                                    <h5 class="mb-0 font-weight-semi-bold">
+                                                                        <i class="fas fa-hospital-user mr-2 ml-2 text-teal"></i>กลุ่มงาน : {{ $deptName }}
+                                                                    </h5>
                                                                 </td>
                                                             </tr>
                                                             @php $currentDept = $deptName; @endphp
