@@ -70,7 +70,7 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="target_value">ค่าเป้าหมาย (ร้อยละ) <span class="text-danger">*</span></label>
-                                    <input type="number" step="0.10" name="target_value" class="form-control"
+                                    <input type="number" step="1.0" name="target_value" class="form-control"
                                         id="target_value" value="{{ $ranking->target_value }}">
                                     @error('target_value')
                                         <span class="text-danger">{{ $message }}</span>
@@ -78,7 +78,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="weight">น้ำหนักคะแนน (Weight) <span class="text-danger">*</span></label>
-                                    <input type="number" step="0.10" name="weight" class="form-control" id="weight"
+                                    <input type="number" step="0.01" name="weight" class="form-control" id="weight"
                                         value="{{ $ranking->weight }}">
                                     @error('weight')
                                         <span class="text-danger">{{ $message }}</span>

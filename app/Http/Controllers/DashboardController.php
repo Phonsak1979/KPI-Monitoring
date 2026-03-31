@@ -115,6 +115,15 @@ class DashboardController extends Controller
                     ";
                 }
 
+                // ผู้ป่วยนอกได้รับบริการแพทย์แผนไทย
+                elseif ($code === '47') {
+                    $selectRawSql = "
+                        hospcode,
+                        SUM(IFNULL(op_service_q1, 0) + IFNULL(op_service_q2, 0) + IFNULL(op_service_q3, 0) + IFNULL(op_service_q4, 0)) AS target,
+                        SUM(IFNULL(tm_service_q1, 0) + IFNULL(tm_service_q2, 0) + IFNULL(tm_service_q3, 0) + IFNULL(tm_service_q4, 0)) AS result
+                    ";
+                }
+
                 // =========================================================================
 
                 // 3. คำนวณผลงานของแต่ละโรงพยาบาลในตัวชี้วัดนั้น ๆ (สำหรับแสดงใน Modal)
@@ -193,7 +202,7 @@ class DashboardController extends Controller
                     ->where('id', $ranking->id)
                     ->update([
                         'rank' => $rank,
-                        'score_total' => $score_total
+                        'score_total' => round($score_total, 2)
                     ]);
 
                 // กำหนดตัวแปรไว้ใน Object เพื่อเตรียมส่งไปแสดงผลยังระดับ View (Blade)

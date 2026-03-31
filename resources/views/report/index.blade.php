@@ -203,8 +203,8 @@
                                                                 <div>
                                                                     <span class="badge bg-info" style="min-width: 50px; display: inline-block;">R{{ $ranking->ranking_code }}</span>
                                                                     {{ $ranking->ranking_name }}
-                                                                    <span class="badge bg-indigo" style="min-width: 30px; display: inline-block;">{{ $ranking->weight }}</span>
-                                                                    <span class="badge bg-warning" style="min-width: 30px; display: inline-block;">{{ $ranking->score_total }}</span>
+                                                                    <span class="badge bg-indigo" style="min-width: 30px; display: inline-block;">{{ number_format($ranking->weight, 2) }}</span>
+                                                                    <span class="badge bg-warning" style="min-width: 30px; display: inline-block;">{{ number_format($ranking->score_total, 2) }}</span>
                                                                     <a href="{{ $ranking->hdc_link }}" target="_blank" class="badge badge-primary" style="min-width: 30px; display: inline-block;" title="HDC Link">
                                                                         <i class="fas fa-link"></i>
                                                                     </a>

@@ -72,7 +72,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="weight">น้ำหนักคะแนน (Weight) <span class="text-danger">*</span></label>
-                                    <input type="number" step="0.1" name="weight" class="form-control" id="weight"
+                                    <input type="number" step="0.01" name="weight" class="form-control" id="weight"
                                         placeholder="00">
                                     @error('weight')
                                         <span class="text-danger">{{ $message }}</span>

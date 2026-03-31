@@ -97,6 +97,15 @@ class ReportController extends Controller
                     ";
                 }
 
+                // ผู้ป่วยนอกได้รับบริการแพทย์แผนไทย
+                elseif ($code === '47') {
+                    $selectRawSql = "
+                        hospcode,
+                        SUM(IFNULL(op_service_q1, 0) + IFNULL(op_service_q2, 0) + IFNULL(op_service_q3, 0) + IFNULL(op_service_q4, 0)) AS target,
+                        SUM(IFNULL(tm_service_q1, 0) + IFNULL(tm_service_q2, 0) + IFNULL(tm_service_q3, 0) + IFNULL(tm_service_q4, 0)) AS result
+                    ";
+                }
+
                 // =========================================================================
                 // 3. ดึงข้อมูลและคำนวณผลงานของแต่ละโรงพยาบาลที่เรา filter มา
                 $details = DB::table($ranking->table_name)
@@ -130,7 +139,7 @@ class ReportController extends Controller
                 $score_total = ($rank / 5) * ($ranking->weight ?? 0);
 
                 $ranking->rank = $rank;
-                $ranking->score_total = $score_total;
+                $ranking->score_total = round($score_total, 2);
             }
         }
 
