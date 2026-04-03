@@ -330,6 +330,16 @@ class SyncController extends Controller
                             $values['result'] = $result;
                         }
 
+                        if ($tableName === 's_ttm35') {
+                            $op_service_q1 = isset($values['op_service_q1']) ? (float)$values['op_service_q1'] : 0;
+                            $op_service_q2 = isset($values['op_service_q2']) ? (float)$values['op_service_q2'] : 0;
+                            $op_service_q3 = isset($values['op_service_q3']) ? (float)$values['op_service_q3'] : 0;
+                            $op_service_q4 = isset($values['op_service_q4']) ? (float)$values['op_service_q4'] : 0;
+
+                            $values['target'] = $op_service_q1 + $op_service_q2 + $op_service_q3 + $op_service_q4;
+                            $values['result'] = $op_service_q1 + $op_service_q2 + $op_service_q3 + $op_service_q4;
+                        }
+
                         $values['updated_at'] = now();
                         $values['created_at'] = now();
 

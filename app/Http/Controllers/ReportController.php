@@ -16,12 +16,34 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
+        $data = $this->getReportData($request, false);
+        return view('report.index', $data);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $data = $this->getReportData($request, true);
+        $fileName = 'KPI_Report_' . date('Ymd_His') . '.xls';
+        
+        return response(view('report.export_excel', $data))
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $data = $this->getReportData($request, true);
+        return view('report.print', $data);
+    }
+
+    private function getReportData(Request $request, $isExport = false)
+    {
         // 1. นำเข้าข้อมูลพื้นฐาน พร้อมโหลดข้อมูลกลุ่มงาน (Eager Load) และเรียงลำดับตาม department_id
         $rankings = Ranking::with('department')->get()
             ->sortBy('ranking_code', SORT_NATURAL)
             ->sortBy('department_id')
             ->values();
-        
+
         // ข้อมูลหน่วยบริการ (เพื่อไปแสดงใน Dropdown) เรียงตาม รหัส รพ.
         $hospitalsList = Hospital::orderBy('hospital_code')->get();
         // Collection ข้อมูลหน่วยบริการ เพื่อใช้แมปชื่อ
@@ -29,7 +51,7 @@ class ReportController extends Controller
 
         // รับค่าการกรอง από Request
         $selectedHospcode = $request->input('hospcode');
-        
+
         // ถ้ามีการเลือกหน่วยบริการ ให้กรองเฉพาะรหัสที่เลือก ถ้าไม่มีก็ดึงทั้งหมดเหมือน Dashboard Default 
         if ($selectedHospcode) {
             $hospitalCodes = [$selectedHospcode];
@@ -97,20 +119,20 @@ class ReportController extends Controller
                     ";
                 }
 
-                // ผู้ป่วยนอกได้รับบริการแพทย์แผนไทย
-                elseif ($code === '47') {
-                    $selectRawSql = "
-                        hospcode,
-                        SUM(IFNULL(op_service_q1, 0) + IFNULL(op_service_q2, 0) + IFNULL(op_service_q3, 0) + IFNULL(op_service_q4, 0)) AS target,
-                        SUM(IFNULL(tm_service_q1, 0) + IFNULL(tm_service_q2, 0) + IFNULL(tm_service_q3, 0) + IFNULL(tm_service_q4, 0)) AS result
-                    ";
-                }
+                // // ผู้ป่วยนอกได้รับบริการแพทย์แผนไทย
+                // elseif ($code === '47') {
+                //     $selectRawSql = "
+                //         hospcode,
+                //         SUM(IFNULL(op_service_q1, 0) + IFNULL(op_service_q2, 0) + IFNULL(op_service_q3, 0) + IFNULL(op_service_q4, 0)) AS target,
+                //         SUM(IFNULL(tm_service_q1, 0) + IFNULL(tm_service_q2, 0) + IFNULL(tm_service_q3, 0) + IFNULL(tm_service_q4, 0)) AS result
+                //     ";
+                // }
 
                 // =========================================================================
                 // 3. ดึงข้อมูลและคำนวณผลงานของแต่ละโรงพยาบาลที่เรา filter มา
                 $details = DB::table($ranking->table_name)
                     ->whereIn('hospcode', $hospitalCodes) // กรองเฉพาะรายการ รพ. ที่จำกัดไว้
-                    ->selectRaw($selectRawSql) 
+                    ->selectRaw($selectRawSql)
                     ->groupBy('hospcode')
                     ->orderBy('hospcode')
                     ->get()
@@ -182,7 +204,7 @@ class ReportController extends Controller
 
         // 6. Pagination
         $page = Paginator::resolveCurrentPage() ?: 1;
-        $perPage = 50;
+        $perPage = $isExport ? max(1, $filteredRankings->count()) : 50;
         $paginatedRankings = new LengthAwarePaginator(
             $filteredRankings->forPage($page, $perPage)->values(),
             $filteredRankings->count(),
@@ -192,8 +214,7 @@ class ReportController extends Controller
         );
         $rankings = $paginatedRankings;
 
-        // 7. ส่งไปที่ View ใหม่ (เราจะสร้างไฟล์ resource/views/report/index.blade.php)
-        return view('report.index', compact(
+        return compact(
             'rankings',
             'hospitalsList',
             'selectedHospcode',
@@ -205,7 +226,7 @@ class ReportController extends Controller
             'totalScore',
             'percentScore',
             'filterStatus'
-        ));
+        );
     }
 
     /**
@@ -232,11 +253,21 @@ class ReportController extends Controller
             $isMatched = false;
 
             switch ($operator) {
-                case '>=': $isMatched = ($percent >= $threshold); break;
-                case '>':  $isMatched = ($percent > $threshold); break;
-                case '<=': $isMatched = ($percent <= $threshold); break;
-                case '<':  $isMatched = ($percent < $threshold); break;
-                case '=':  $isMatched = ($percent == $threshold); break;
+                case '>=':
+                    $isMatched = ($percent >= $threshold);
+                    break;
+                case '>':
+                    $isMatched = ($percent > $threshold);
+                    break;
+                case '<=':
+                    $isMatched = ($percent <= $threshold);
+                    break;
+                case '<':
+                    $isMatched = ($percent < $threshold);
+                    break;
+                case '=':
+                    $isMatched = ($percent == $threshold);
+                    break;
             }
 
             if ($isMatched) {

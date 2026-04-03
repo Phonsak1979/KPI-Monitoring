@@ -27,7 +27,8 @@ Auth::routes();
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::get('/report', [ReportController::class, 'index'])->name('report.index')->middleware('auth');
-
+Route::get('/report/export/excel', [ReportController::class, 'exportExcel'])->name('report.export.excel')->middleware('auth');
+Route::get('/report/export/pdf', [ReportController::class, 'exportPdf'])->name('report.export.pdf')->middleware('auth');
 // Resource routes (ทุก role เข้าถึง index/show ได้, admin middleware ตรวจสอบใน Controller)
 Route::middleware('auth')->group(function () {
     Route::get('user/detail', [UserController::class, 'profileEdit'])->name('user.detail');
