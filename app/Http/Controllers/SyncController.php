@@ -340,7 +340,7 @@ class SyncController extends Controller
                             $tm_service_q2 = isset($values['tm_service_q2']) ? (float)$values['tm_service_q2'] : 0;
                             $tm_service_q3 = isset($values['tm_service_q3']) ? (float)$values['tm_service_q3'] : 0;
                             $tm_service_q4 = isset($values['tm_service_q4']) ? (float)$values['tm_service_q4'] : 0;
-                            
+
 
                             $values['target'] = $op_service_q1 + $op_service_q2 + $op_service_q3 + $op_service_q4;
                             $values['result'] = $tm_service_q1 + $tm_service_q2 + $tm_service_q3 + $tm_service_q4;
