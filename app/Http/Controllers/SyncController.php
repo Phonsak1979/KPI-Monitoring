@@ -318,6 +318,11 @@ class SyncController extends Controller
                             $values['result'] = $result1 + $result2;
                         }
 
+                        if ($tableName === 's_kpi_dental62') {
+                            // ลบข้อมูลเดิม
+                            DB::table($tableName)->delete();
+                        }
+
                         if ($tableName === 's_epi2') {
                             $months = ['10', '11', '12', '01', '02', '03', '04', '05', '06', '07', '08', '09'];
                             $target = 0;
@@ -344,17 +349,6 @@ class SyncController extends Controller
 
                             $values['target'] = $op_service_q1 + $op_service_q2 + $op_service_q3 + $op_service_q4;
                             $values['result'] = $tm_service_q1 + $tm_service_q2 + $tm_service_q3 + $tm_service_q4;
-                        }
-
-                        if ($tableName === 's_kpi_dental62') {
-                            // ลบข้อมูลเดิม
-                            DB::table($tableName)->delete();
-
-                            $target = isset($values['target']) ? (float)$values['target'] : 0;
-                            $result = isset($values['result']) ? (float)$values['result'] : 0;
-
-                            $values['target'] = $target;
-                            $values['result'] = $result;
                         }
 
                         $values['updated_at'] = now();
