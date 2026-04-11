@@ -346,6 +346,17 @@ class SyncController extends Controller
                             $values['result'] = $tm_service_q1 + $tm_service_q2 + $tm_service_q3 + $tm_service_q4;
                         }
 
+                        if ($tableName === 's_kpi_dental62') {
+                            // ลบข้อมูลเดิม
+                            DB::table($tableName)->delete();
+
+                            $target = isset($values['target']) ? (float)$values['target'] : 0;
+                            $result = isset($values['result']) ? (float)$values['result'] : 0;
+
+                            $values['target'] = $target;
+                            $values['result'] = $result;
+                        }
+
                         $values['updated_at'] = now();
                         $values['created_at'] = now();
 
