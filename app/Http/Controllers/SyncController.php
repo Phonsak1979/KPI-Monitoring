@@ -197,7 +197,7 @@ class SyncController extends Controller
     /**
      * ฟังก์ชันแกนหลัก (Core Functional): หน้าที่ยิง API ไปยัง HDC กลางแล้วจัดการข้อมูลเอาลงตาราง
      */
-    private function syncSingleRanking(Ranking $ranking)
+    public function syncSingleRanking(Ranking $ranking)
     {
         ini_set('max_execution_time', 0);
         set_time_limit(0);
@@ -279,6 +279,12 @@ class SyncController extends Controller
                     // ==============================================================
                     // [ระบบใหม่] วนลูปและประมวลผลแบบประหยัด RAM (Inline Chunking)
                     // ==============================================================
+                    
+                    // ป้องกันการลบข้อมูลทิ้งทุกรอบที่มีการวน loop
+                    if ($tableName === 's_kpi_dental62') {
+                        DB::table($tableName)->delete();
+                    }
+
                     foreach ($data as $index => $row) {
                         $conditions = [
                             'hospcode' => $row['hospcode'] ?? '',
@@ -316,11 +322,6 @@ class SyncController extends Controller
 
                             $values['target'] = $target1 + $target2;
                             $values['result'] = $result1 + $result2;
-                        }
-
-                        if ($tableName === 's_kpi_dental62') {
-                            // ลบข้อมูลเดิม
-                            DB::table($tableName)->delete();
                         }
 
                         if ($tableName === 's_epi2') {
