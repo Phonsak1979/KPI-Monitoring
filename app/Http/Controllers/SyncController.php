@@ -280,10 +280,10 @@ class SyncController extends Controller
                     // [ระบบใหม่] วนลูปและประมวลผลแบบประหยัด RAM (Inline Chunking)
                     // ==============================================================
                     
-                    // ป้องกันการลบข้อมูลทิ้งทุกรอบที่มีการวน loop
-                    if ($tableName === 's_kpi_dental62') {
-                        DB::table($tableName)->delete();
-                    }
+                    // เคลียร์ข้อมูลเก่าทั้งหมดในตารางทิ้งก่อนเริ่มบันทึกข้อมูลใหม่ (ตามตัวเลือก B)
+                    // ใช้ truncate เพื่อลบข้อมูลทั้งหมดและรีเซ็ต ID ให้เริ่มใหม่
+                    DB::table($tableName)->truncate();
+                    \Illuminate\Support\Facades\Log::info("เคลียร์ข้อมูลเก่าทั้งหมดในตาราง {$tableName} (Truncate) เรียบร้อยแล้ว");
 
                     foreach ($data as $index => $row) {
                         $conditions = [
