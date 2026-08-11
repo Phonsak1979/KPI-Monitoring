@@ -119,32 +119,39 @@ class ReportController extends Controller
                     ";
                 }
 
-                // // ผู้ป่วยนอกได้รับบริการแพทย์แผนไทย
-                // elseif ($code === '47') {
-                //     $selectRawSql = "
-                //         hospcode,
-                //         SUM(IFNULL(op_service_q1, 0) + IFNULL(op_service_q2, 0) + IFNULL(op_service_q3, 0) + IFNULL(op_service_q4, 0)) AS target,
-                //         SUM(IFNULL(tm_service_q1, 0) + IFNULL(tm_service_q2, 0) + IFNULL(tm_service_q3, 0) + IFNULL(tm_service_q4, 0)) AS result
-                //     ";
-                // }
+                // ผู้ป่วยนอกได้รับบริการแพทย์แผนไทย
+                elseif ($code === '47') {
+                    $selectRawSql = "
+                        hospcode,
+                        SUM(IFNULL(op_service_q1, 0) + IFNULL(op_service_q2, 0) + IFNULL(op_service_q3, 0) + IFNULL(op_service_q4, 0)) AS target,
+                        SUM(IFNULL(tm_service_q1, 0) + IFNULL(tm_service_q2, 0) + IFNULL(tm_service_q3, 0) + IFNULL(tm_service_q4, 0)) AS result
+                    ";
+                }
 
                 // =========================================================================
                 // 3. ดึงข้อมูลและคำนวณผลงานของแต่ละโรงพยาบาลที่เรา filter มา
-                $details = DB::table($ranking->table_name)
+                $dbDetails = DB::table($ranking->table_name)
                     ->whereIn('hospcode', $hospitalCodes) // กรองเฉพาะรายการ รพ. ที่จำกัดไว้
                     ->selectRaw($selectRawSql)
                     ->groupBy('hospcode')
-                    ->orderBy('hospcode')
                     ->get()
-                    ->map(function ($item) use ($hospitalsMap, $ranking) {
-                        $item->hospital_name = isset($hospitalsMap[$item->hospcode]) ? $hospitalsMap[$item->hospcode]->hospital_name : 'ไม่ทราบชื่อ';
-                        $item->percent = 0;
-                        if ($item->target > 0) {
-                            $item->percent = ($item->result / $item->target) * 100;
-                        }
-                        $item->rank = $this->calculateDynamicRank($item->percent, $ranking);
-                        return $item;
-                    });
+                    ->keyBy('hospcode');
+
+                $details = collect($hospitalCodes)->map(function ($hospcode) use ($dbDetails, $hospitalsMap, $ranking) {
+                    $dbItem = $dbDetails->get($hospcode);
+                    $item = new \stdClass();
+                    $item->hospcode = $hospcode;
+                    $item->target = $dbItem ? $dbItem->target : 0;
+                    $item->result = $dbItem ? $dbItem->result : 0;
+                    $item->hospital_name = isset($hospitalsMap[$hospcode]) ? $hospitalsMap[$hospcode]->hospital_name : 'ไม่ทราบชื่อ';
+                    
+                    $item->percent = 0;
+                    if ($item->target > 0) {
+                        $item->percent = ($item->result / $item->target) * 100;
+                    }
+                    $item->rank = $this->calculateDynamicRank($item->percent, $ranking);
+                    return $item;
+                })->sortBy('hospcode')->values();
 
                 // เก็บ details กรณีนำไปโชว์ใน Modal
                 $ranking->details = $details;

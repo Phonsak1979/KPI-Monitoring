@@ -226,6 +226,7 @@ class SyncController extends Controller
                             'tableName' => $tableName,
                             'year' => $year,
                             'province' => $province,
+                            'limit' => 100000,
                             'type' => 'json'
                         ]);
 
@@ -245,9 +246,18 @@ class SyncController extends Controller
             }
 
             if ($response && $response->successful()) {
-                $data = $response->json();
+                $rawResponse = $response->json();
+                $data = null;
 
-                if ($data && is_array($data)) {
+                if (is_array($rawResponse)) {
+                    if (isset($rawResponse['data']) && is_array($rawResponse['data'])) {
+                        $data = $rawResponse['data'];
+                    } elseif (empty($rawResponse) || isset($rawResponse[0])) {
+                        $data = $rawResponse;
+                    }
+                }
+
+                if ($data !== null && is_array($data)) {
 
                     \Illuminate\Support\Facades\Log::info('ดึงข้อมูลตาราง ' . $tableName . ' ได้ทั้งหมด: ' . count($data) . ' แถว');
 
@@ -286,6 +296,9 @@ class SyncController extends Controller
                     \Illuminate\Support\Facades\Log::info("เคลียร์ข้อมูลเก่าทั้งหมดในตาราง {$tableName} (Truncate) เรียบร้อยแล้ว");
 
                     foreach ($data as $index => $row) {
+                        if (!is_array($row)) {
+                            continue;
+                        }
                         $conditions = [
                             'hospcode' => $row['hospcode'] ?? '',
                             'areacode' => $row['areacode'] ?? '',

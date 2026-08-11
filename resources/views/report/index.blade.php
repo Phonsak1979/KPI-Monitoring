@@ -208,7 +208,9 @@
                                                             <td>
                                                                 <div>
                                                                     <a href="{{ $ranking->hdc_link }}" target="_blank" class="badge bg-info" style="min-width: 50px; display: inline-block;" title="ดูข้อมูล HDC">R{{ $ranking->ranking_code }}</a>
-                                                                    {{ $ranking->ranking_name }}
+                                                                    <span @if(in_array(trim($ranking->ranking_name), ['หญิงตั้งครรภ์ได้รับบริการฝากครรภ์ครบ 8 ครั้งตามเกณฑ์', 'DSPM การคัดกรองพัฒนาการ', 'DSPM พัฒนาการสงสัยล่าช้า', 'DSPM เด็กพัฒนาการสมวัย', 'DSPM เด็กพัฒนาการล่าช้าได้รับการกระตุ้นจนสมวัย', 'เด็กอายุ 6 เดือน - 5 ปี ได้รับยาน้ำเสริมธาตุเหล็ก', 'เด็กอายุ 6 เดือน – 5 ปี ได้รับยาน้ำเสริมธาตุเหล็ก', 'ผู้สูงอายุที่ไม่มีภาวะพึ่งพิง', 'เด็ก 0-2 ปี ผู้ปกครองได้รับการฝึกแปรงฟันแบบลงมือปฏิบัติ (plaque control)', 'เด็กอายุ 12 ปี มีฟันดีไม่มีผุ (Cavity Free)', 'ผู้ป่วยนอกได้รับการรักษาด้วยการแพทย์แผนไทยและการแพทย์ทางเลือก'])) class="text-danger" @endif>
+                                                                        {{ $ranking->ranking_name }}
+                                                                    </span>
                                                                     <span class="badge bg-indigo" style="min-width: 30px; display: inline-block;">{{ number_format($ranking->weight, 2) }}</span>
                                                                 </div>
                                                             </td>
