@@ -242,11 +242,7 @@
                                                                         class="badge bg-info"
                                                                         style="min-width: 50px; display: inline-block;"
                                                                         title="ดูข้อมูล HDC">R{{ $ranking->ranking_code }}</a>
-                                                                    <span
-                                                                        @if (in_array(trim($ranking->ranking_name), [
-                                                                                'เด็ก 0-2 ปี ผู้ปกครองได้รับการฝึกแปรงฟันแบบลงมือปฏิบัติ (plaque control)',
-                                                                                'ผู้ป่วยนอกได้รับการรักษาด้วยการแพทย์แผนไทยและการแพทย์ทางเลือก',
-                                                                            ])) class="text-danger" @endif>
+                                                                    <span>
                                                                         {{ $ranking->ranking_name }}
                                                                     </span>
                                                                     <span class="badge bg-indigo"
