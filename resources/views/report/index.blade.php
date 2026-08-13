@@ -10,7 +10,8 @@
             .small-box .icon {
                 display: block !important;
             }
-            .small-box .icon > i {
+
+            .small-box .icon>i {
                 font-size: 70px !important;
                 top: 15px !important;
                 right: 15px !important;
@@ -35,7 +36,8 @@
                             <div class="card-body">
                                 <form method="GET" action="{{ route('report.index') }}" id="filterForm">
                                     <div class="form-group row mb-0 align-items-center">
-                                        <label for="hospcode" class="col-sm-2 col-form-label text-right">เลือกหน่วยบริการ : </label>
+                                        <label for="hospcode" class="col-sm-2 col-form-label text-right">เลือกหน่วยบริการ :
+                                        </label>
                                         <div class="col-sm-6">
                                             <select name="hospcode" id="hospcode" class="custom-select"
                                                 onchange="document.getElementById('filterForm').submit()">
@@ -43,7 +45,8 @@
                                                 @foreach ($hospitalsList as $hospital)
                                                     <option value="{{ $hospital->hospital_code }}"
                                                         {{ $selectedHospcode == $hospital->hospital_code ? 'selected' : '' }}>
-                                                        <i class="fas fa-home mr-2"></i>{{ $hospital->hospital_code }} : {{ $hospital->hospital_name }}
+                                                        <i class="fas fa-home mr-2"></i>{{ $hospital->hospital_code }} :
+                                                        {{ $hospital->hospital_name }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -51,7 +54,7 @@
                                         <div class="col-sm-4 mt-2 mt-sm-0">
                                             @if ($selectedHospcode)
                                                 <a href="{{ route('report.index') }}" class="btn btn-outline-danger">
-                                                <i class="fas fa-eraser mr-1"></i>ล้างตัวกรอง</a>
+                                                    <i class="fas fa-eraser mr-1"></i>ล้างตัวกรอง</a>
                                             @endif
                                         </div>
                                     </div>
@@ -70,8 +73,8 @@
                                     <div class="icon">
                                         <i class="far fa-list-alt"></i>
                                     </div>
-                                    <a href="{{ request()->fullUrlWithQuery(['filterStatus' => 'all', 'page' => 1]) }}" class="small-box-footer">รายละเอียด <i
-                                            class="fas fa-arrow-circle-right"></i></a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filterStatus' => 'all', 'page' => 1]) }}"
+                                        class="small-box-footer">รายละเอียด <i class="fas fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-4">
@@ -83,8 +86,8 @@
                                     <div class="icon">
                                         <i class="fas fa-tasks"></i>
                                     </div>
-                                    <a href="{{ request()->fullUrlWithQuery(['filterStatus' => 'passed', 'page' => 1]) }}" class="small-box-footer">รายละเอียด <i
-                                            class="fas fa-arrow-circle-right"></i></a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filterStatus' => 'passed', 'page' => 1]) }}"
+                                        class="small-box-footer">รายละเอียด <i class="fas fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-4 col-sm-12">
@@ -96,8 +99,8 @@
                                     <div class="icon">
                                         <i class="fas fa-window-close"></i>
                                     </div>
-                                    <a href="{{ request()->fullUrlWithQuery(['filterStatus' => 'failed', 'page' => 1]) }}" class="small-box-footer">รายละเอียด <i
-                                            class="fas fa-arrow-circle-right"></i></a>
+                                    <a href="{{ request()->fullUrlWithQuery(['filterStatus' => 'failed', 'page' => 1]) }}"
+                                        class="small-box-footer">รายละเอียด <i class="fas fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-4 col-sm-12">
@@ -149,11 +152,12 @@
                                         <h3 class="card-title mt-1">
                                             <i class="fas fa-tasks mr-2"></i><b>ผลการดำเนินงานตาม HDC-KPI</b>
                                             @if ($selectedHospcode)
-                                                <span class="text-warning"><b> | หน่วยบริการ {{ $selectedHospcode }}</b></span>
+                                                <span class="text-warning"><b> | หน่วยบริการ
+                                                        {{ $selectedHospcode }}</b></span>
                                             @else
                                                 <span class="text-warning"><b> | รวมทุกหน่วยบริการ</b></span>
                                             @endif
-                                            
+
                                             @if (($filterStatus ?? 'all') === 'passed')
                                                 <span class="text-warning"><b> | เฉพาะผ่านเกณฑ์</b></span>
                                             @elseif (($filterStatus ?? 'all') === 'failed')
@@ -161,10 +165,12 @@
                                             @endif
                                         </h3>
                                         <div class="card-tools">
-                                            <a href="{{ route('report.export.excel', request()->query()) }}" class="btn bg-gradient-teal btn-sm">
+                                            <a href="{{ route('report.export.excel', request()->query()) }}"
+                                                class="btn bg-gradient-teal btn-sm">
                                                 <i class="fas fa-file-excel mr-1"></i>Excel
                                             </a>
-                                            <a href="{{ route('report.export.pdf', request()->query()) }}" target="_blank" class="btn bg-gradient-teal btn-sm">
+                                            <a href="{{ route('report.export.pdf', request()->query()) }}" target="_blank"
+                                                class="btn bg-gradient-teal btn-sm">
                                                 <i class="fas fa-print mr-1"></i>Print / PDF
                                             </a>
                                         </div>
@@ -177,63 +183,107 @@
                                                     @php $currentDept = null; @endphp
                                                     @forelse ($rankings as $index => $ranking)
                                                         @php
-                                                            $deptName = $ranking->department->department_name ?? 'ไม่มีกลุ่มงาน';
+                                                            $deptName =
+                                                                $ranking->department->department_name ??
+                                                                'ไม่มีกลุ่มงาน';
                                                             $percent = $ranking->percent;
-                                                            $badgeClass = $percent >= $ranking->target_value ? 'bg-success' : 'bg-danger';
+                                                            $badgeClass =
+                                                                $percent >= $ranking->target_value
+                                                                    ? 'bg-success'
+                                                                    : 'bg-danger';
                                                         @endphp
 
                                                         @if ($currentDept !== $deptName)
-                                                            <tr style="border-top: 3px solid #20c997; border-bottom: 1px solid #dee2e6;">
+                                                            <tr
+                                                                style="border-top: 3px solid #20c997; border-bottom: 1px solid #dee2e6;">
                                                                 <td colspan="8" class="py-3 bg-white">
                                                                     <h5 class="mb-0 font-weight-semi-bold">
-                                                                        <i class="fas fa-hospital-user mr-2 ml-2 text-teal"></i>กลุ่มงาน : {{ $deptName }}
+                                                                        <i
+                                                                            class="fas fa-hospital-user mr-2 ml-2 text-teal"></i>กลุ่มงาน
+                                                                        : {{ $deptName }}
                                                                     </h5>
                                                                 </td>
                                                             </tr>
                                                             <tr style="background-color: #fcfcfc;">
-                                                                <th class="text-center" style="width: 5%; border-bottom: 2px solid #dee2e6;">ลำดับ</th>
-                                                                <th class="text-center" style="width: 56%; border-bottom: 2px solid #dee2e6;">ชื่อตัวชี้วัด (น้ำหนักคะแนน)</th>
-                                                                <th class="text-right" style="width: 8%; border-bottom: 2px solid #dee2e6;">เป้าหมาย</th>
-                                                                <th class="text-right" style="width: 8%; border-bottom: 2px solid #dee2e6;">ผลงาน</th>
-                                                                <th class="text-center" style="width: 8%; border-bottom: 2px solid #dee2e6;">ร้อยละ</th>
-                                                                <th class="text-center" style="width: 5%; border-bottom: 2px solid #dee2e6;">Rank</th>
-                                                                <th class="text-center" style="width: 5%; border-bottom: 2px solid #dee2e6;">Score</th>
-                                                                <th class="text-center" style="width: 5%; border-bottom: 2px solid #dee2e6;"><i class="fas fa-search-plus"></i></th>
+                                                                <th class="text-center"
+                                                                    style="width: 5%; border-bottom: 2px solid #dee2e6;">
+                                                                    ลำดับ</th>
+                                                                <th class="text-center"
+                                                                    style="width: 56%; border-bottom: 2px solid #dee2e6;">
+                                                                    ชื่อตัวชี้วัด (น้ำหนักคะแนน)</th>
+                                                                <th class="text-right"
+                                                                    style="width: 8%; border-bottom: 2px solid #dee2e6;">
+                                                                    เป้าหมาย</th>
+                                                                <th class="text-right"
+                                                                    style="width: 8%; border-bottom: 2px solid #dee2e6;">
+                                                                    ผลงาน</th>
+                                                                <th class="text-center"
+                                                                    style="width: 8%; border-bottom: 2px solid #dee2e6;">
+                                                                    ร้อยละ</th>
+                                                                <th class="text-center"
+                                                                    style="width: 5%; border-bottom: 2px solid #dee2e6;">
+                                                                    Rank</th>
+                                                                <th class="text-center"
+                                                                    style="width: 5%; border-bottom: 2px solid #dee2e6;">
+                                                                    Score</th>
+                                                                <th class="text-center"
+                                                                    style="width: 5%; border-bottom: 2px solid #dee2e6;"><i
+                                                                        class="fas fa-search-plus"></i></th>
                                                             </tr>
                                                             @php $currentDept = $deptName; @endphp
                                                         @endif
 
                                                         <tr>
-                                                            <td class="text-center">{{ $rankings->firstItem() + $index }}</td>
+                                                            <td class="text-center">{{ $rankings->firstItem() + $index }}
+                                                            </td>
                                                             <td>
                                                                 <div>
-                                                                    <a href="{{ $ranking->hdc_link }}" target="_blank" class="badge bg-info" style="min-width: 50px; display: inline-block;" title="ดูข้อมูล HDC">R{{ $ranking->ranking_code }}</a>
-                                                                    <span @if(in_array(trim($ranking->ranking_name), ['หญิงตั้งครรภ์ได้รับบริการฝากครรภ์ครบ 8 ครั้งตามเกณฑ์', 'DSPM การคัดกรองพัฒนาการ', 'DSPM พัฒนาการสงสัยล่าช้า', 'DSPM เด็กพัฒนาการสมวัย', 'DSPM เด็กพัฒนาการล่าช้าได้รับการกระตุ้นจนสมวัย', 'เด็กอายุ 6 เดือน - 5 ปี ได้รับยาน้ำเสริมธาตุเหล็ก', 'เด็กอายุ 6 เดือน – 5 ปี ได้รับยาน้ำเสริมธาตุเหล็ก', 'ผู้สูงอายุที่ไม่มีภาวะพึ่งพิง', 'เด็ก 0-2 ปี ผู้ปกครองได้รับการฝึกแปรงฟันแบบลงมือปฏิบัติ (plaque control)', 'เด็กอายุ 12 ปี มีฟันดีไม่มีผุ (Cavity Free)', 'ผู้ป่วยนอกได้รับการรักษาด้วยการแพทย์แผนไทยและการแพทย์ทางเลือก'])) class="text-danger" @endif>
+                                                                    <a href="{{ $ranking->hdc_link }}" target="_blank"
+                                                                        class="badge bg-info"
+                                                                        style="min-width: 50px; display: inline-block;"
+                                                                        title="ดูข้อมูล HDC">R{{ $ranking->ranking_code }}</a>
+                                                                    <span
+                                                                        @if (in_array(trim($ranking->ranking_name), [
+                                                                                'DSPM การคัดกรองพัฒนาการ',
+                                                                                'DSPM พัฒนาการสงสัยล่าช้า',
+                                                                                'DSPM เด็กพัฒนาการสมวัย',
+                                                                                'DSPM เด็กพัฒนาการล่าช้าได้รับการกระตุ้นจนสมวัย',
+                                                                                'เด็ก 0-2 ปี ผู้ปกครองได้รับการฝึกแปรงฟันแบบลงมือปฏิบัติ (plaque control)',
+                                                                                'ผู้ป่วยนอกได้รับการรักษาด้วยการแพทย์แผนไทยและการแพทย์ทางเลือก',
+                                                                            ])) class="text-danger" @endif>
                                                                         {{ $ranking->ranking_name }}
                                                                     </span>
-                                                                    <span class="badge bg-indigo" style="min-width: 30px; display: inline-block;">{{ number_format($ranking->weight, 2) }}</span>
+                                                                    <span class="badge bg-indigo"
+                                                                        style="min-width: 30px; display: inline-block;">{{ number_format($ranking->weight, 2) }}</span>
                                                                 </div>
                                                             </td>
-                                                            <td class="text-right text-bold">{{ number_format($ranking->total_target) }}</td>
-                                                            <td class="text-right text-bold">{{ number_format($ranking->total_result) }}</td>
+                                                            <td class="text-right text-bold">
+                                                                {{ number_format($ranking->total_target) }}</td>
+                                                            <td class="text-right text-bold">
+                                                                {{ number_format($ranking->total_result) }}</td>
                                                             <td class="text-center">
-                                                                <span class="badge {{ $badgeClass }}" style="min-width: 55px; display: inline-block;">{{ number_format($percent, 2) }}%</span>
+                                                                <span class="badge {{ $badgeClass }}"
+                                                                    style="min-width: 55px; display: inline-block;">{{ number_format($percent, 2) }}%</span>
                                                             </td>
                                                             <td class="text-center">
-                                                                <span class="badge bg-primary" style="min-width: 50px; display: inline-block;">{{ $ranking->rank }}</span>
+                                                                <span class="badge bg-primary"
+                                                                    style="min-width: 50px; display: inline-block;">{{ $ranking->rank }}</span>
                                                             </td>
                                                             <td class="text-center">
-                                                                <span class="badge bg-warning" style="min-width: 50px; display: inline-block;">{{ number_format($ranking->score_total, 2) }}</span>
+                                                                <span class="badge bg-warning"
+                                                                    style="min-width: 50px; display: inline-block;">{{ number_format($ranking->score_total, 2) }}</span>
                                                             </td>
                                                             <td class="text-center">
-                                                                <a href="#" data-toggle="modal" data-target="#modal-kpi-{{ $ranking->id }}">
+                                                                <a href="#" data-toggle="modal"
+                                                                    data-target="#modal-kpi-{{ $ranking->id }}">
                                                                     <i class="fas fa-search-plus text-primary"></i>
                                                                 </a>
                                                             </td>
                                                         </tr>
                                                     @empty
                                                         <tr>
-                                                            <td colspan="8" class="text-center text-muted py-4">ไม่พบข้อมูลตัวชี้วัด</td>
+                                                            <td colspan="8" class="text-center text-muted py-4">
+                                                                ไม่พบข้อมูลตัวชี้วัด</td>
                                                         </tr>
                                                     @endforelse
                                                 </tbody>
