@@ -210,42 +210,81 @@ class SyncController extends Controller
             return false;
         }
 
+        if (!Schema::hasTable($tableName)) {
+            \Illuminate\Support\Facades\Log::error("ไม่พบตารางในฐานข้อมูล: " . $tableName);
+            return false;
+        }
+
         $year = '2569';
         $province = '34';
 
         try {
-            $maxRetries = 4; // ลองเชื่อมต่อใหม่สูงสุด 4 รอบ เมื่อพบเหตุขัดข้อง
-            $attempt = 0;
-            $response = null;
+            $columns = array_flip(Schema::getColumnListing($tableName));
+            $updateColumns = array_diff(array_keys($columns), ['id', 'created_at']);
 
-            while ($attempt < $maxRetries) {
-                try {
-                    $response = Http::withoutVerifying()
-                        ->timeout(600)
-                        ->post('https://opendata.moph.go.th/api/report_data', [
-                            'tableName' => $tableName,
-                            'year' => $year,
-                            'province' => $province,
-                            'limit' => 100000,
-                            'type' => 'json'
-                        ]);
-
-                    if ($response->successful()) {
-                        break; // เชื่อมต่อสำเร็จ หลุดจาก loop ทันที
-                    }
-
-                    \Illuminate\Support\Facades\Log::warning("API MOPH Open-Data ไม่ตอบสนอง (ตาราง {$tableName}): HTTP สถานะ " . $response->status() . " (ความพยายามที่ " . ($attempt + 1) . "/{$maxRetries})");
-                } catch (\Exception $e) {
-                    \Illuminate\Support\Facades\Log::warning("API MOPH Open-Data Error (ตาราง {$tableName}): " . $e->getMessage() . " (ความพยายามที่ " . ($attempt + 1) . "/{$maxRetries})");
-                }
-
-                $attempt++;
-                if ($attempt < $maxRetries) {
-                    sleep(6); // หน่วงเวลา 6 วินาทีก่อนลองเสี่ยงโชคใหม่ ป้องกัน API ต้นทางบล็อก
-                }
+            $dbColumns = DB::select("SHOW COLUMNS FROM {$tableName}");
+            $colTypes = [];
+            foreach ($dbColumns as $col) {
+                $colTypes[$col->Field] = strtolower($col->Type);
             }
 
-            if ($response && $response->successful()) {
+            $hasMonthly = isset($columns['monthly']);
+
+            // กำหนด Unique Key
+            $uniqueFields = ['hospcode', 'areacode', 'b_year'];
+            if ($hasMonthly) {
+                $uniqueFields[] = 'monthly';
+            }
+            $uniqueBy = isset($columns['id']) ? ['id'] : $uniqueFields;
+
+            // เคลียร์ข้อมูลเก่าทั้งหมดในตารางทิ้งก่อนเริ่มบันทึกข้อมูลใหม่
+            DB::table($tableName)->truncate();
+            \Illuminate\Support\Facades\Log::info("เคลียร์ข้อมูลเก่าทั้งหมดในตาราง {$tableName} (Truncate) เรียบร้อยแล้ว");
+
+            $limit = 5000;
+            $offset = 0;
+            $hasMoreData = true;
+            $totalRowsSynced = 0;
+            $maxRetries = 4;
+
+            while ($hasMoreData) {
+                $attempt = 0;
+                $response = null;
+
+                while ($attempt < $maxRetries) {
+                    try {
+                        $response = Http::withoutVerifying()
+                            ->timeout(120)
+                            ->post('https://opendata.moph.go.th/api/report_data', [
+                                'tableName' => $tableName,
+                                'year' => $year,
+                                'province' => $province,
+                                'limit' => $limit,
+                                'offset' => $offset,
+                                'type' => 'json'
+                            ]);
+
+                        if ($response->successful()) {
+                            break; // เชื่อมต่อสำเร็จ หลุดจาก loop ทันที
+                        }
+
+                        \Illuminate\Support\Facades\Log::warning("API MOPH Open-Data ไม่ตอบสนอง (ตาราง {$tableName}, offset {$offset}): HTTP สถานะ " . $response->status() . " (ความพยายามที่ " . ($attempt + 1) . "/{$maxRetries})");
+                    } catch (\Exception $e) {
+                        \Illuminate\Support\Facades\Log::warning("API MOPH Open-Data Error (ตาราง {$tableName}, offset {$offset}): " . $e->getMessage() . " (ความพยายามที่ " . ($attempt + 1) . "/{$maxRetries})");
+                    }
+
+                    $attempt++;
+                    if ($attempt < $maxRetries) {
+                        sleep(4);
+                    }
+                }
+
+                if (!$response || !$response->successful()) {
+                    $status = $response ? $response->status() : 'Unknown (Connection Failed)';
+                    \Illuminate\Support\Facades\Log::error("API MOPH Open-Data ล้มเหลว (ตาราง {$tableName}, offset {$offset}) ตลอดการลอง {$maxRetries} ครั้ง HTTP สถานะ: {$status}");
+                    break;
+                }
+
                 $rawResponse = $response->json();
                 $data = null;
 
@@ -257,153 +296,126 @@ class SyncController extends Controller
                     }
                 }
 
-                if ($data !== null && is_array($data)) {
+                if (empty($data) || !is_array($data)) {
+                    $hasMoreData = false;
+                    break;
+                }
 
-                    \Illuminate\Support\Facades\Log::info('ดึงข้อมูลตาราง ' . $tableName . ' ได้ทั้งหมด: ' . count($data) . ' แถว');
+                $dataCount = count($data);
+                $totalRowsSynced += $dataCount;
+                \Illuminate\Support\Facades\Log::info("ดึงข้อมูลตาราง {$tableName} (offset: {$offset}) ได้: {$dataCount} แถว (รวมสะสม: {$totalRowsSynced} แถว)");
 
-                    if (!Schema::hasTable($tableName)) {
-                        \Illuminate\Support\Facades\Log::error("ไม่พบตารางในฐานข้อมูล: " . $tableName);
-                        return false;
+                $insertData = [];
+
+                foreach ($data as $index => $row) {
+                    if (!is_array($row)) {
+                        continue;
+                    }
+                    $conditions = [
+                        'hospcode' => $row['hospcode'] ?? '',
+                        'areacode' => $row['areacode'] ?? '',
+                        'b_year'   => $row['b_year'] ?? $year,
+                    ];
+
+                    if ($hasMonthly && isset($row['monthly'])) {
+                        $conditions['monthly'] = $row['monthly'];
                     }
 
-                    $columns = array_flip(Schema::getColumnListing($tableName));
-                    $updateColumns = array_diff(array_keys($columns), ['id', 'created_at']);
-
-                    $dbColumns = DB::select("SHOW COLUMNS FROM {$tableName}");
-                    $colTypes = [];
-                    foreach ($dbColumns as $col) {
-                        $colTypes[$col->Field] = strtolower($col->Type);
-                    }
-
-                    $hasMonthly = isset($columns['monthly']);
-
-                    // กำหนด Unique Key
-                    $uniqueFields = ['hospcode', 'areacode', 'b_year'];
-                    if ($hasMonthly) {
-                        $uniqueFields[] = 'monthly';
-                    }
-                    $uniqueBy = isset($columns['id']) ? ['id'] : $uniqueFields;
-
-                    $insertData = [];
-
-                    // ==============================================================
-                    // [ระบบใหม่] วนลูปและประมวลผลแบบประหยัด RAM (Inline Chunking)
-                    // ==============================================================
-                    
-                    // เคลียร์ข้อมูลเก่าทั้งหมดในตารางทิ้งก่อนเริ่มบันทึกข้อมูลใหม่ (ตามตัวเลือก B)
-                    // ใช้ truncate เพื่อลบข้อมูลทั้งหมดและรีเซ็ต ID ให้เริ่มใหม่
-                    DB::table($tableName)->truncate();
-                    \Illuminate\Support\Facades\Log::info("เคลียร์ข้อมูลเก่าทั้งหมดในตาราง {$tableName} (Truncate) เรียบร้อยแล้ว");
-
-                    foreach ($data as $index => $row) {
-                        if (!is_array($row)) {
+                    $values = [];
+                    foreach ($row as $key => $value) {
+                        if ($key === 'id') {
                             continue;
                         }
-                        $conditions = [
-                            'hospcode' => $row['hospcode'] ?? '',
-                            'areacode' => $row['areacode'] ?? '',
-                            'b_year'   => $row['b_year'] ?? $year,
-                        ];
 
-                        if ($hasMonthly && isset($row['monthly'])) {
-                            $conditions['monthly'] = $row['monthly'];
-                        }
+                        if (isset($columns[$key]) && !array_key_exists($key, $conditions)) {
+                            $type = $colTypes[$key] ?? 'varchar';
+                            $isNumeric = (strpos($type, 'int') !== false || strpos($type, 'float') !== false || strpos($type, 'double') !== false || strpos($type, 'decimal') !== false);
 
-                        $values = [];
-                        foreach ($row as $key => $value) {
-                            if ($key === 'id') {
-                                continue;
+                            if ($value === '' || $value === null) {
+                                $values[$key] = $isNumeric ? 0 : '';
+                            } else {
+                                $values[$key] = $value;
                             }
-
-                            if (isset($columns[$key]) && !array_key_exists($key, $conditions)) {
-                                $type = $colTypes[$key] ?? 'varchar';
-                                $isNumeric = (strpos($type, 'int') !== false || strpos($type, 'float') !== false || strpos($type, 'double') !== false || strpos($type, 'decimal') !== false);
-
-                                if ($value === '' || $value === null) {
-                                    $values[$key] = $isNumeric ? 0 : '';
-                                } else {
-                                    $values[$key] = $value;
-                                }
-                            }
-                        }
-
-                        if ($tableName === 's_kpi_dental61') {
-                            $target1 = isset($values['target1']) ? (float)$values['target1'] : 0;
-                            $target2 = isset($values['target2']) ? (float)$values['target2'] : 0;
-                            $result1 = isset($values['result1']) ? (float)$values['result1'] : 0;
-                            $result2 = isset($values['result2']) ? (float)$values['result2'] : 0;
-
-                            $values['target'] = $target1 + $target2;
-                            $values['result'] = $result1 + $result2;
-                        }
-
-                        if ($tableName === 's_epi2') {
-                            $months = ['10', '11', '12', '01', '02', '03', '04', '05', '06', '07', '08', '09'];
-                            $target = 0;
-                            $result = 0;
-                            foreach ($months as $month) {
-                                $target += isset($values["target{$month}"]) ? (float)$values["target{$month}"] : 0;
-                                $result += isset($values["mmr2_{$month}"]) ? (float)$values["mmr2_{$month}"] : 0;
-                            }
-                            $values['target'] = $target;
-                            $values['result'] = $result;
-                        }
-
-                        if ($tableName === 's_ttm35') {
-                            $op_service_q1 = isset($values['op_service_q1']) ? (float)$values['op_service_q1'] : 0;
-                            $op_service_q2 = isset($values['op_service_q2']) ? (float)$values['op_service_q2'] : 0;
-                            $op_service_q3 = isset($values['op_service_q3']) ? (float)$values['op_service_q3'] : 0;
-                            $op_service_q4 = isset($values['op_service_q4']) ? (float)$values['op_service_q4'] : 0;
-
-                            $tm_service_q1 = isset($values['tm_service_q1']) ? (float)$values['tm_service_q1'] : 0;
-                            $tm_service_q2 = isset($values['tm_service_q2']) ? (float)$values['tm_service_q2'] : 0;
-                            $tm_service_q3 = isset($values['tm_service_q3']) ? (float)$values['tm_service_q3'] : 0;
-                            $tm_service_q4 = isset($values['tm_service_q4']) ? (float)$values['tm_service_q4'] : 0;
-
-
-                            $values['target'] = $op_service_q1 + $op_service_q2 + $op_service_q3 + $op_service_q4;
-                            $values['result'] = $tm_service_q1 + $tm_service_q2 + $tm_service_q3 + $tm_service_q4;
-                        }
-
-                        $values['updated_at'] = now();
-                        $values['created_at'] = now();
-
-                        $rowData = array_merge($conditions, $values);
-
-                        if (isset($columns['id'])) {
-                            $rowData['id'] = md5(implode('', $conditions) . $tableName);
-                        }
-
-                        $insertData[] = $rowData;
-
-                        // เคลียร์ข้อมูลที่ถูกวนลูปแล้วทิ้งทันที เพื่อคืนพื้นที่ RAM!
-                        unset($data[$index]);
-
-                        // บันทึกย่อยทุกๆ 500 แถว แล้วเคลียร์แรม
-                        if (count($insertData) >= 500) {
-                            DB::table($tableName)->upsert($insertData, $uniqueBy, $updateColumns);
-                            $insertData = []; // รีเซ็ตชุดข้อมูล
                         }
                     }
 
-                    // บันทึกข้อมูลเศษที่เหลือจาก 500 แถวสุดท้าย
-                    if (count($insertData) > 0) {
+                    if ($tableName === 's_kpi_dental61') {
+                        $target1 = isset($values['target1']) ? (float)$values['target1'] : 0;
+                        $target2 = isset($values['target2']) ? (float)$values['target2'] : 0;
+                        $result1 = isset($values['result1']) ? (float)$values['result1'] : 0;
+                        $result2 = isset($values['result2']) ? (float)$values['result2'] : 0;
+
+                        $values['target'] = $target1 + $target2;
+                        $values['result'] = $result1 + $result2;
+                    }
+
+                    if ($tableName === 's_epi2') {
+                        $months = ['10', '11', '12', '01', '02', '03', '04', '05', '06', '07', '08', '09'];
+                        $target = 0;
+                        $result = 0;
+                        foreach ($months as $month) {
+                            $target += isset($values["target{$month}"]) ? (float)$values["target{$month}"] : 0;
+                            $result += isset($values["mmr2_{$month}"]) ? (float)$values["mmr2_{$month}"] : 0;
+                        }
+                        $values['target'] = $target;
+                        $values['result'] = $result;
+                    }
+
+                    if ($tableName === 's_ttm35') {
+                        $op_service_q1 = isset($values['op_service_q1']) ? (float)$values['op_service_q1'] : 0;
+                        $op_service_q2 = isset($values['op_service_q2']) ? (float)$values['op_service_q2'] : 0;
+                        $op_service_q3 = isset($values['op_service_q3']) ? (float)$values['op_service_q3'] : 0;
+                        $op_service_q4 = isset($values['op_service_q4']) ? (float)$values['op_service_q4'] : 0;
+
+                        $tm_service_q1 = isset($values['tm_service_q1']) ? (float)$values['tm_service_q1'] : 0;
+                        $tm_service_q2 = isset($values['tm_service_q2']) ? (float)$values['tm_service_q2'] : 0;
+                        $tm_service_q3 = isset($values['tm_service_q3']) ? (float)$values['tm_service_q3'] : 0;
+                        $tm_service_q4 = isset($values['tm_service_q4']) ? (float)$values['tm_service_q4'] : 0;
+
+                        $values['target'] = $op_service_q1 + $op_service_q2 + $op_service_q3 + $op_service_q4;
+                        $values['result'] = $tm_service_q1 + $tm_service_q2 + $tm_service_q3 + $tm_service_q4;
+                    }
+
+                    $values['updated_at'] = now();
+                    $values['created_at'] = now();
+
+                    $rowData = array_merge($conditions, $values);
+
+                    if (isset($columns['id'])) {
+                        $rowData['id'] = md5(implode('', $conditions) . $tableName);
+                    }
+
+                    $insertData[] = $rowData;
+
+                    unset($data[$index]);
+
+                    if (count($insertData) >= 500) {
                         DB::table($tableName)->upsert($insertData, $uniqueBy, $updateColumns);
+                        $insertData = [];
                     }
-
-                    return true;
                 }
-            } else {
-                $status = $response ? $response->status() : 'Unknown (Connection Failed)';
-                \Illuminate\Support\Facades\Log::error("API MOPH Open-Data ล้มเหลว (ตาราง {$tableName}) ตลอดการลอง {$maxRetries} ครั้ง HTTP สถานะ: {$status}");
+
+                if (count($insertData) > 0) {
+                    DB::table($tableName)->upsert($insertData, $uniqueBy, $updateColumns);
+                }
+
+                if ($dataCount < $limit) {
+                    $hasMoreData = false;
+                } else {
+                    $offset += $limit;
+                }
             }
 
-            // เปลี่ยนมาใช้ Throwable จะดักจับ Error ได้ทุกสายพันธุ์รวมถึงแรมเต็ม
+            if ($totalRowsSynced > 0) {
+                \Illuminate\Support\Facades\Log::info("Sync ข้อมูลตาราง {$tableName} สำเร็จรวมทั้งสิ้น {$totalRowsSynced} แถว");
+                return true;
+            }
+
+            return false;
+
         } catch (Throwable $e) {
             \Illuminate\Support\Facades\Log::error("API Sync Failed สำหรับตาราง {$tableName}: " . $e->getMessage());
             return false;
         }
-
-        return false;
     }
 }
